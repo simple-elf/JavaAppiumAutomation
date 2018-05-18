@@ -1,3 +1,4 @@
+import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import org.junit.After;
 import org.junit.Before;
@@ -8,7 +9,7 @@ import java.net.URL;
 
 public class FirstTest {
 
-    private AndroidDriver driver;
+    private AppiumDriver driver;
 
     @Before
     public void setUp() throws Exception {
