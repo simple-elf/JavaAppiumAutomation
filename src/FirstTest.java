@@ -1,5 +1,6 @@
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
+import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -12,6 +13,9 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
+import java.util.List;
+
+import static org.hamcrest.CoreMatchers.is;
 
 public class FirstTest {
 
@@ -44,10 +48,10 @@ public class FirstTest {
                 "Cannot find search button",
                 5);
 
-        WebElement search_input = waitForElementPresent(
+        WebElement searchInput = waitForElementPresent(
                 By.id("org.wikipedia:id/search_src_text"),
                 "Cannot find search input");
-        checkElementText(search_input, "Search…");
+        checkElementText(searchInput, "Search…");
 
         waitForElementAndSendKeys(
                 By.xpath("//*[contains(@text, 'Search…')]"),
@@ -62,6 +66,13 @@ public class FirstTest {
                 15);
     }
 
+    /**
+     * Написать тест, который:
+     * 1. Ищет какое-то слово
+     * 2. Убеждается, что найдено несколько статей
+     * 3. Отменяет поиск (ТУТ НАВЕРНОЕ ИМЕЕТСЯ ВВИДУ ОЧИСТКА ПОЛЯ ПОИСКА, А НЕ ОТМЕНА ПО НАЖАТИЮ КРЕСТИКА)
+     * 4. Убеждается, что результат поиска пропал
+     */
     @Test
     public void testCancelSearch() {
         waitForElementAndClick(
@@ -75,16 +86,25 @@ public class FirstTest {
                 "Cannot find search input" ,
                 5);
 
-        waitForElementPresent(
-                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
-                        "//*[@text='Object-oriented programming language']"),
-                "Cannon find Java OOP",
+        WebElement searchResultsList = waitForElementPresent(
+                By.id("org.wikipedia:id/search_results_list"),
+                "Cannot find search results list",
                 15);
+
+        List<WebElement> searchResults = searchResultsList.findElements(By.className("android.widget.LinearLayout"));
+        System.out.println("Size: " + searchResults.size());
+        Assert.assertTrue("There is no search results", searchResults.size() > 0);
 
         waitForElementAndClear(
                 By.id("org.wikipedia:id/search_src_text"),
                 "Cannot find search input" ,
                 5);
+
+        WebElement emptyMessage = waitForElementPresent(
+                By.id("org.wikipedia:id/search_empty_message"),
+                "Cannot find empty message",
+                5);
+        checkElementText(emptyMessage, "Search and read the free encyclopedia in your language");
 
         waitForElementAndClick(
                 By.id("org.wikipedia:id/search_close_btn"),
