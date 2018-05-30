@@ -1,6 +1,7 @@
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -64,7 +65,7 @@ public class FirstTest {
                 5);
 
         waitForElementAndSendKeys(
-                By.xpath("//*[contains(@text, 'Search…')]"),
+                By.id("org.wikipedia:id/search_src_text"),
                 "Java",
                 "Cannot find search input" ,
                 5);
@@ -78,8 +79,7 @@ public class FirstTest {
         waitForElementAndClear(
                 By.id("org.wikipedia:id/search_src_text"),
                 "Cannot find search input" ,
-                5
-        );
+                5);
 
         waitForElementAndClick(
                 By.id("org.wikipedia:id/search_close_btn"),
@@ -90,6 +90,34 @@ public class FirstTest {
                 By.id("org.wikipedia:id/search_close_btn"),
                 "Close button is still on page",
                 5);
+    }
+
+    @Test
+    public void testCompareArticleTitle() {
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/search_container"),
+                "Cannot find search button",
+                5);
+
+        waitForElementAndSendKeys(
+                By.id("org.wikipedia:id/search_src_text"),
+                "Java",
+                "Cannot find search input" ,
+                5);
+
+        waitForElementAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
+                        "//*[@text='Object-oriented programming language']"),
+                "Cannon find Java OOP",
+                5);
+
+        WebElement titleElement = waitForElementPresent(
+                By.id("org.wikipedia:id/view_page_title_text"),
+                "Cannot find article title",
+                15);
+
+        String articleTitle = titleElement.getAttribute("text");
+        Assert.assertEquals("Were are unexpected title!", "Java (programming language)", articleTitle);
     }
 
     private WebElement waitForElementAndClear(By by, String errorText, long timeoutInSeconds) {
