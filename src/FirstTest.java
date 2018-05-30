@@ -55,6 +55,17 @@ public class FirstTest {
                 15);
     }
 
+    @Test
+    public void testCancelSearch() {
+        waitForElementByIdAndClick("org.wikipedia:id/search_container", "Cannot find search button", 5);
+
+        waitForElementByIdAndClick("org.wikipedia:id/search_close_btn", "Cannot find close button", 5);
+
+        waitForElementNotPresentById("org.wikipedia:id/search_close_btn", "Close button is still on page", 5);
+    }
+
+
+
     private WebElement waitForElementByXpathAndClick(String xpath, String errorText, long timeoutInSeconds) {
         WebElement element = waitForElementPresentByXpath(xpath, errorText, timeoutInSeconds);
         element.click();
@@ -76,6 +87,26 @@ public class FirstTest {
         wait.withMessage(errorText + "\n");
         By by = By.xpath(xpath);
         return wait.until(ExpectedConditions.presenceOfElementLocated(by));
+    }
+
+    private WebElement waitForElementPresentById(String id, String errorText, long timeoutInSeconds) {
+        WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+        wait.withMessage(errorText + "\n");
+        By by = By.id(id);
+        return wait.until(ExpectedConditions.presenceOfElementLocated(by));
+    }
+
+    private WebElement waitForElementByIdAndClick(String id, String errorText, long timeoutInSeconds) {
+        WebElement element = waitForElementPresentById(id, errorText, timeoutInSeconds);
+        element.click();
+        return element;
+    }
+
+    private boolean waitForElementNotPresentById(String id, String errorText, long timeoutInSeconds) {
+        WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
+        wait.withMessage(errorText + "\n");
+        By by = By.id(id);
+        return wait.until(ExpectedConditions.invisibilityOfElementLocated(by));
     }
 
 }
