@@ -29,7 +29,6 @@ public class FirstTest {
         capabilities.setCapability("app","C:\\Users\\simpl\\IdeaProjects\\JavaAppiumAutomation\\apks\\org.wikipedia.apk");
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
-
     }
 
     @After
@@ -39,14 +38,33 @@ public class FirstTest {
 
     @Test
     public void firstTest() {
-        WebElement search_init = driver.findElementByXPath("//*[contains(@text, 'Search Wikipedia')]");
-        search_init.click();
+        waitForElementByXpathAndClick(
+                "//*[contains(@text, 'Search Wikipedia')]",
+                "Cannot find search button",
+                5);
 
-        WebElement search_input =  waitForElementPresentByXpath("//*[contains(@text, 'Search…')]", "Cannot find search input");
-        search_input.sendKeys("Java");
+        waitForElementByXpathAndSendKeys(
+                "//*[contains(@text, 'Search…')]",
+                "Java",
+                "Cannot find search input" ,
+                5);
 
-        waitForElementPresentByXpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']",
-                "Cannon find Java OOP", 15);
+        waitForElementPresentByXpath(
+                "//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']",
+                "Cannon find Java OOP",
+                15);
+    }
+
+    private WebElement waitForElementByXpathAndClick(String xpath, String errorText, long timeoutInSeconds) {
+        WebElement element = waitForElementPresentByXpath(xpath, errorText, timeoutInSeconds);
+        element.click();
+        return element;
+    }
+
+    private WebElement waitForElementByXpathAndSendKeys(String xpath, String value, String errorText, long timeoutInSeconds) {
+        WebElement element = waitForElementPresentByXpath(xpath, errorText, timeoutInSeconds);
+        element.sendKeys(value);
+        return element;
     }
 
     private WebElement waitForElementPresentByXpath(String xpath, String errorText) {
