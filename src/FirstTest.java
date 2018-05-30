@@ -117,6 +117,57 @@ public class FirstTest {
                 5);
     }
 
+    /**
+     * Написать тест, который:
+     * 1. Ищет какое-то слово
+     * 2. Убеждается, что в каждом результате поиска есть это слово.
+     */
+    @Test
+    public void testSearchAndCheckResults() {
+        searchAndCheckResults("Java");
+        searchAndCheckResults("Selenium");
+
+        searchAndCheckResults("Android"); // fails on last search result with "WebDriverException: Returned value cannot be converted to WebElement: org.wikipedia:id/page_list_item_title"
+        searchAndCheckResults("Appium"); // fails because second item is AppImage
+    }
+
+    private void searchAndCheckResults(String searchString) {
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/search_container"),
+                "Cannot find search button",
+                5);
+
+        waitForElementAndSendKeys(
+                By.id("org.wikipedia:id/search_src_text"),
+                searchString,
+                "Cannot find search input",
+                5);
+
+        WebElement searchResults = waitForElementPresent(
+                By.id("org.wikipedia:id/search_results_list"),
+                "Cannot find search results list",
+                15);
+
+        List<WebElement> searchResultsList = searchResults.findElements(By.className("android.widget.LinearLayout"));
+        System.out.println("Size: " + searchResultsList.size());
+
+        for (WebElement searchItem : searchResultsList) {
+            String searchItemTitle = searchItem.findElement(By.id("org.wikipedia:id/page_list_item_title")).getText();
+            System.out.println("searchItemTitle: " + searchItemTitle);
+            Assert.assertThat("Search result item doesn't contains search text", searchItemTitle, CoreMatchers.containsString(searchString));
+        }
+
+        waitForElementAndClear(
+                By.id("org.wikipedia:id/search_src_text"),
+                "Cannot find search input" ,
+                5);
+
+        WebElement emptyMessage = waitForElementPresent(
+                By.id("org.wikipedia:id/search_empty_message"),
+                "Cannot find empty message",
+                5);
+    }
+
     @Test
     public void testCompareArticleTitle() {
         waitForElementAndClick(
