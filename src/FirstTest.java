@@ -42,8 +42,12 @@ public class FirstTest {
         WebElement search_init = driver.findElementByXPath("//*[contains(@text, 'Search Wikipedia')]");
         search_init.click();
 
-        WebElement search_input =  waitForElementPresentByXpath("//*[contains(@text, 'Search…')]", "Cannot find search input", 5);
+        WebElement search_input =  waitForElementPresentByXpath("//*[contains(@text, 'Search…')]", "Cannot find search input");
         search_input.sendKeys("Appium");
+    }
+
+    private WebElement waitForElementPresentByXpath(String xpath, String errorText) {
+        return waitForElementPresentByXpath(xpath, errorText, 5);
     }
 
     private WebElement waitForElementPresentByXpath(String xpath, String errorText, long timeoutInSeconds) {
