@@ -44,6 +44,11 @@ public class FirstTest {
                 "Cannot find search button",
                 5);
 
+        WebElement search_input = waitForElementPresent(
+                By.id("org.wikipedia:id/search_src_text"),
+                "Cannot find search input");
+        checkElementText(search_input, "Search…");
+
         waitForElementAndSendKeys(
                 By.xpath("//*[contains(@text, 'Search…')]"),
                 "Java",
@@ -102,7 +107,7 @@ public class FirstTest {
         waitForElementAndSendKeys(
                 By.id("org.wikipedia:id/search_src_text"),
                 "Java",
-                "Cannot find search input" ,
+                "Cannot find search input",
                 5);
 
         waitForElementAndClick(
@@ -116,8 +121,17 @@ public class FirstTest {
                 "Cannot find article title",
                 15);
 
-        String articleTitle = titleElement.getAttribute("text");
-        Assert.assertEquals("Were are unexpected title!", "Java (programming language)", articleTitle);
+        //String articleTitle = titleElement.getAttribute("text");
+        //Assert.assertEquals("Were are unexpected title!", "Java (programming language)", articleTitle);
+        checkElementText(titleElement, "Java (programming language)");
+    }
+
+    // Ex 2: Написать функцию, которая проверяет наличие текста “Search…” в строке поиска
+    // перед вводом текста и помечает тест упавшим, если такого текста нет.
+    private void checkElementText(WebElement element, String expectedText) {
+        //String actualText = element.getAttribute("text");
+        String actualText = element.getText();
+        Assert.assertEquals("Element text is not expected!", expectedText, actualText);
     }
 
     private WebElement waitForElementAndClear(By by, String errorText, long timeoutInSeconds) {
