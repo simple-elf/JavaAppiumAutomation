@@ -4,6 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -36,7 +37,7 @@ public class FirstTest {
     }
 
     @Test
-    public void firstTest() {
+    public void testSearchAndCheck() {
         waitForElementAndClick(
                 By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
                 "Cannot find search button",
@@ -62,6 +63,24 @@ public class FirstTest {
                 "Cannot find search button",
                 5);
 
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text, 'Search…')]"),
+                "Java",
+                "Cannot find search input" ,
+                5);
+
+        waitForElementPresent(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
+                        "//*[@text='Object-oriented programming language']"),
+                "Cannon find Java OOP",
+                15);
+
+        waitForElementAndClear(
+                By.id("org.wikipedia:id/search_src_text"),
+                "Cannot find search input" ,
+                5
+        );
+
         waitForElementAndClick(
                 By.id("org.wikipedia:id/search_close_btn"),
                 "Cannot find close button",
@@ -71,6 +90,12 @@ public class FirstTest {
                 By.id("org.wikipedia:id/search_close_btn"),
                 "Close button is still on page",
                 5);
+    }
+
+    private WebElement waitForElementAndClear(By by, String errorText, long timeoutInSeconds) {
+        WebElement element = waitForElementPresent(by, errorText, timeoutInSeconds);
+        element.clear();
+        return element;
     }
 
     private WebElement waitForElementAndClick(By by, String errorText, long timeoutInSeconds) {
