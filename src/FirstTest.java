@@ -43,7 +43,10 @@ public class FirstTest {
         search_init.click();
 
         WebElement search_input =  waitForElementPresentByXpath("//*[contains(@text, 'Search…')]", "Cannot find search input");
-        search_input.sendKeys("Appium");
+        search_input.sendKeys("Java");
+
+        waitForElementPresentByXpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']",
+                "Cannon find Java OOP", 15);
     }
 
     private WebElement waitForElementPresentByXpath(String xpath, String errorText) {
