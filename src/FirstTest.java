@@ -1,4 +1,5 @@
 import io.appium.java_client.AppiumDriver;
+import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
@@ -6,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -56,7 +58,7 @@ public class FirstTest {
         waitForElementAndSendKeys(
                 By.xpath("//*[contains(@text, 'Search…')]"),
                 "Java",
-                "Cannot find search input" ,
+                "Cannot find search input",
                 5);
 
         waitForElementPresent(
@@ -83,7 +85,7 @@ public class FirstTest {
         waitForElementAndSendKeys(
                 By.id("org.wikipedia:id/search_src_text"),
                 "Java",
-                "Cannot find search input" ,
+                "Cannot find search input",
                 5);
 
         WebElement searchResultsList = waitForElementPresent(
@@ -97,7 +99,7 @@ public class FirstTest {
 
         waitForElementAndClear(
                 By.id("org.wikipedia:id/search_src_text"),
-                "Cannot find search input" ,
+                "Cannot find search input",
                 5);
 
         WebElement emptyMessage = waitForElementPresent(
@@ -159,7 +161,7 @@ public class FirstTest {
 
         waitForElementAndClear(
                 By.id("org.wikipedia:id/search_src_text"),
-                "Cannot find search input" ,
+                "Cannot find search input",
                 5);
 
         WebElement emptyMessage = waitForElementPresent(
@@ -197,8 +199,49 @@ public class FirstTest {
         checkElementText(titleElement, "Java (programming language)");
     }
 
-    // Ex 2: Написать функцию, которая проверяет наличие текста “Search…” в строке поиска
-    // перед вводом текста и помечает тест упавшим, если такого текста нет.
+    @Test
+    public void testSwipeArticle() {
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/search_container"),
+                "Cannot find search button",
+                5);
+
+        waitForElementAndSendKeys(
+                By.id("org.wikipedia:id/search_src_text"),
+                "Java",
+                "Cannot find search input",
+                5);
+
+        waitForElementAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
+                        "//*[@text='Object-oriented programming language']"),
+                "Cannon find Java OOP",
+                5);
+
+        waitForElementPresent(
+                By.id("org.wikipedia:id/view_page_title_text"),
+                "Cannot find article title",
+                15);
+
+        swipeUp(1000); // на 2000 срабатывает выделение текста
+        swipeUp(1000);
+
+    }
+
+    protected void swipeUp(int timeOfSwipe) {
+        TouchAction action = new TouchAction(driver);
+        Dimension size = driver.manage().window().getSize();
+        int x = size.width / 2;
+        int startY = (int) (size.height * 0.8);
+        int endY = (int) (size.height * 0.2);
+
+        action.press(x, startY).waitAction(timeOfSwipe).moveTo(x, endY).release().perform();
+    }
+
+    /**
+     * Ex 2: Написать функцию, которая проверяет наличие текста “Search…” в строке поиска
+     * перед вводом текста и помечает тест упавшим, если такого текста нет.
+     */
     private void checkElementText(WebElement element, String expectedText) {
         //String actualText = element.getAttribute("text");
         String actualText = element.getText();
