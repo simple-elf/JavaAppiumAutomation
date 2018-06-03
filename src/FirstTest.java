@@ -225,8 +225,108 @@ public class FirstTest {
         swipeUpToFindElement(
                 By.xpath("//*[@text='View page in browser']"),
                 "Cannot find footer element",
+                10);
+
+    }
+
+    @Test
+    public void saveFirstArticleToMyList() {
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/search_container"),
+                "Cannot find search button",
                 5);
 
+        waitForElementAndSendKeys(
+                By.id("org.wikipedia:id/search_src_text"),
+                "Java",
+                "Cannot find search input",
+                5);
+
+        waitForElementAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
+                        "//*[@text='Object-oriented programming language']"),
+                "Cannon find Java OOP",
+                5);
+
+        waitForElementPresent(
+                By.id("org.wikipedia:id/view_page_title_text"),
+                "Cannot find article title",
+                15);
+
+        waitForElementAndClick(
+                By.xpath("//android.widget.ImageView[@content-desc='More options']"),
+                "Cannot find options button",
+                5);
+
+        waitForElementAndClick(
+                By.xpath("//*[@text='Add to reading list']"),
+                "Cannot find option for adding to reading list",
+                5);
+
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/onboarding_button"),
+                "Cannot find onboarding overlay",
+                5);
+
+        waitForElementAndClear(
+                By.id("org.wikipedia:id/text_input"),
+                "Cannot find input for new reading list",
+                5);
+
+        waitForElementAndSendKeys(
+                By.id("org.wikipedia:id/text_input"),
+                "Learning programming",
+                "Cannot send text to input for reading list",
+                5);
+
+        waitForElementAndClick(
+                By.xpath("//*[@text='OK']"),
+                "Cannot press OK button",
+                5);
+
+        waitForElementAndClick(
+                By.xpath("//android.widget.ImageView[@content-desc='Navigate up']"),
+                "Cannot find close article button",
+                5);
+
+        waitForElementAndClick(
+                By.xpath("//android.widget.FrameLayout[@content-desc='My lists']"),
+                "Cannot find button 'My lists'",
+                5);
+
+        waitForElementAndClick(
+                By.xpath("//*[@text='Java (programming language)']"),
+                "Cannon find Java article",
+                5);
+
+        swipeElementToLeft(
+                By.xpath("//*[@text='Java (programming language)']"),
+                "Cannot swipe saved article");
+
+        waitForElementNotPresent(
+                By.xpath("//*[@text='Java (programming language)']"),
+                "Cannot delete saved article",
+                5);
+    }
+
+    protected void swipeElementToLeft(By by, String errorText) {
+        WebElement element = waitForElementPresent(
+                by,
+                errorText,
+                10);
+
+        int leftX = element.getLocation().getX();
+        int rightX = leftX + element.getSize().getWidth();
+        int upperY = element.getLocation().getY();
+        int lowerY = upperY + element.getSize().getHeight();
+        int middleY = (upperY + lowerY) / 2;
+
+        new TouchAction(driver)
+                .press(rightX, middleY)
+                .waitAction(350)
+                .moveTo(leftX, middleY)
+                .release()
+                .perform();
     }
 
     protected void swipeUpToFindElement(By by, String errorText, int maxSwipes) {
@@ -252,7 +352,12 @@ public class FirstTest {
         int startY = (int) (size.height * 0.8);
         int endY = (int) (size.height * 0.2);
 
-        action.press(x, startY).waitAction(timeOfSwipe).moveTo(x, endY).release().perform();
+        action
+                .press(x, startY)
+                .waitAction(timeOfSwipe)
+                .moveTo(x, endY)
+                .release()
+                .perform();
     }
 
     /**
