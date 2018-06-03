@@ -208,14 +208,13 @@ public class FirstTest {
 
         waitForElementAndSendKeys(
                 By.id("org.wikipedia:id/search_src_text"),
-                "Java",
+                "Appium",
                 "Cannot find search input",
                 5);
 
         waitForElementAndClick(
-                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
-                        "//*[@text='Object-oriented programming language']"),
-                "Cannon find Java OOP",
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_title'][@text='Appium']"),
+                "Cannon find Appium",
                 5);
 
         waitForElementPresent(
@@ -223,9 +222,27 @@ public class FirstTest {
                 "Cannot find article title",
                 15);
 
-        swipeUp(1000); // на 2000 срабатывает выделение текста
-        swipeUp(1000);
+        swipeUpToFindElement(
+                By.xpath("//*[@text='View page in browser']"),
+                "Cannot find footer element",
+                5);
 
+    }
+
+    protected void swipeUpToFindElement(By by, String errorText, int maxSwipes) {
+        int alreadySwipe = 0;
+        while (driver.findElements(by).size() == 0) {
+            if (alreadySwipe > maxSwipes) {
+                waitForElementPresent(by, "Cannot find element by swiping up. \n" + errorText, 0);
+                return;
+            }
+            swipeUpQuick();
+            alreadySwipe++;
+        }
+    }
+
+    protected void swipeUpQuick() {
+        swipeUp(100);
     }
 
     protected void swipeUp(int timeOfSwipe) {
