@@ -29,7 +29,7 @@ public class FirstTest {
 
         capabilities.setCapability("platformName", "Android");
         capabilities.setCapability("deviceName","AndroidTestDevice_testtest");
-        capabilities.setCapability("platformVersion","8.0");
+        capabilities.setCapability("platformVersion","6.0");
         capabilities.setCapability("automationName","Appium");
         capabilities.setCapability("appPackage","org.wikipedia");
         capabilities.setCapability("appActivity",".main.MainActivity");
@@ -273,19 +273,31 @@ public class FirstTest {
                 "Cannot find input for new reading list",
                 5);
 
+        String nameForSavedReadingList = "Learning programming";
+
         waitForElementAndSendKeys(
                 By.id("org.wikipedia:id/text_input"),
-                "Learning programming",
+                nameForSavedReadingList,
                 "Cannot send text to input for reading list",
                 5);
 
+        System.out.println("Press OK button");
         waitForElementAndClick(
                 By.xpath("//*[@text='OK']"),
                 "Cannot press OK button",
                 5);
+        waitForElementNotPresent(
+                By.xpath("//*[@text='OK']"),
+                "OK button still exists",
+                5);
+
+        waitForElementPresent(
+                By.id("org.wikipedia:id/view_page_title_text"),
+                "Cannot find article title",
+                15);
 
         waitForElementAndClick(
-                By.xpath("//android.widget.ImageView[@content-desc='Navigate up']"),
+                By.xpath("//android.widget.ImageButton[@content-desc='Navigate up']"),
                 "Cannot find close article button",
                 5);
 
@@ -294,9 +306,14 @@ public class FirstTest {
                 "Cannot find button 'My lists'",
                 5);
 
+        waitForElementPresent(
+                By.xpath("//android.widget.TextView[@text='My lists']"),
+                "Cannot find saved lists header",
+                5);
+
         waitForElementAndClick(
-                By.xpath("//*[@text='Java (programming language)']"),
-                "Cannon find Java article",
+                By.xpath("//*[@text='" + nameForSavedReadingList + "']"),
+                "Cannon find saved reading list",
                 5);
 
         swipeElementToLeft(
@@ -323,7 +340,7 @@ public class FirstTest {
 
         new TouchAction(driver)
                 .press(rightX, middleY)
-                .waitAction(350)
+                .waitAction(150)
                 .moveTo(leftX, middleY)
                 .release()
                 .perform();
