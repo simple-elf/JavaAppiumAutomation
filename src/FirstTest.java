@@ -171,6 +171,37 @@ public class FirstTest {
     }
 
     @Test
+    public void testAmountOfNotEmptySearch() {
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/search_container"),
+                "Cannot find search button",
+                5);
+
+        String searchString = "Avril Lavigne discography";
+        waitForElementAndSendKeys(
+                By.id("org.wikipedia:id/search_src_text"),
+                searchString,
+                "Cannot find search input",
+                5);
+
+        String searchResultLocator = "//*[@resource-id='org.wikipedia:id/search_results_list']" +
+                "/*[@resource-id='org.wikipedia:id/page_list_item_container']";
+        waitForElementPresent(
+                By.xpath(searchResultLocator),
+                "Cannot find search results list",
+                15);
+
+        int amountOfSearchResults = getAmountOfElements(By.xpath(searchResultLocator));
+
+        Assert.assertTrue("We found zero results", amountOfSearchResults > 0);
+    }
+
+    private int getAmountOfElements(By by) {
+        List elements = driver.findElements(by);
+        return elements.size();
+    }
+
+    @Test
     public void testCompareArticleTitle() {
         waitForElementAndClick(
                 By.id("org.wikipedia:id/search_container"),
