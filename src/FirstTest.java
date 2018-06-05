@@ -269,6 +269,35 @@ public class FirstTest {
         Assert.assertEquals("Article title have been change after screen rotation", titleBeforeRotation, titleAfterSecondRotation);
     }
 
+    @Test
+    public void testCheckSearchArticleInBackgroud() {
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/search_container"),
+                "Cannot find search button",
+                5);
+
+        String searchString = "Java";
+        waitForElementAndSendKeys(
+                By.id("org.wikipedia:id/search_src_text"),
+                searchString,
+                "Cannot find search input",
+                5);
+
+        waitForElementPresent(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
+                        "//*[@text='Object-oriented programming language']"),
+                "Cannon find Java OOP by search " + searchString,
+                15);
+
+        driver.runAppInBackground(2);
+
+        waitForElementPresent(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
+                        "//*[@text='Object-oriented programming language']"),
+                "Cannon find article 'Java OOP' after returning from background",
+                15);
+    }
+
     private String waitForElementAndGetAttr(By by, String attr, String errorText, long timeoutInSeconds) {
         WebElement element = waitForElementPresent(by, errorText, timeoutInSeconds);
         return element.getAttribute(attr);
