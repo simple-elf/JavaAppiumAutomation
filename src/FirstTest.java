@@ -33,7 +33,9 @@ public class FirstTest {
         capabilities.setCapability("app","C:\\Users\\simpl\\IdeaProjects\\JavaAppiumAutomation\\apks\\org.wikipedia.apk");
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+        // Ex7*: Поворот экрана
         driver.rotate(ScreenOrientation.PORTRAIT);
+        // Перед запуском каждого теста (а именно так работает @Before в junit) поворачивать экран в стандартное вертикальное (портретное) положение
     }
 
     @After
