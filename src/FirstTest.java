@@ -6,10 +6,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -36,6 +33,7 @@ public class FirstTest {
         capabilities.setCapability("app","C:\\Users\\simpl\\IdeaProjects\\JavaAppiumAutomation\\apks\\org.wikipedia.apk");
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+        driver.rotate(ScreenOrientation.PORTRAIT);
     }
 
     @After
@@ -222,6 +220,58 @@ public class FirstTest {
         assertElementNotPresent(
                 By.xpath(searchResultLocator),
                 "We found some results by request " + searchString);
+    }
+
+    @Test
+    public void testChangeScreenRotationOnSearchResults() {
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/search_container"),
+                "Cannot find search button",
+                5);
+
+        String searchString = "Java";
+        waitForElementAndSendKeys(
+                By.id("org.wikipedia:id/search_src_text"),
+                searchString,
+                "Cannot find search input",
+                5);
+
+        waitForElementAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
+                        "//*[@text='Object-oriented programming language']"),
+                "Cannon find Java OOP by search " + searchString,
+                15);
+
+        String titleBeforeRotation = waitForElementAndGetAttr(
+                By.id("org.wikipedia:id/view_page_title_text"),
+                "text",
+                "Cannot find article title",
+                15);
+
+        driver.rotate(ScreenOrientation.LANDSCAPE);
+
+        String titleAfterRotation = waitForElementAndGetAttr(
+                By.id("org.wikipedia:id/view_page_title_text"),
+                "text",
+                "Cannot find article title",
+                15);
+
+        Assert.assertEquals("Article title have been change after screen rotation", titleBeforeRotation, titleAfterRotation);
+
+        driver.rotate(ScreenOrientation.PORTRAIT);
+
+        String titleAfterSecondRotation = waitForElementAndGetAttr(
+                By.id("org.wikipedia:id/view_page_title_text"),
+                "text",
+                "Cannot find article title",
+                15);
+
+        Assert.assertEquals("Article title have been change after screen rotation", titleBeforeRotation, titleAfterSecondRotation);
+    }
+
+    private String waitForElementAndGetAttr(By by, String attr, String errorText, long timeoutInSeconds) {
+        WebElement element = waitForElementPresent(by, errorText, timeoutInSeconds);
+        return element.getAttribute(attr);
     }
 
     private void assertElementNotPresent(By by, String errorText) {
