@@ -348,6 +348,47 @@ public class FirstTest {
     }
 
     @Test
+    public void testCheckArticleTitlePresent() {
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/search_container"),
+                "Cannot find search button",
+                5);
+
+        waitForElementAndSendKeys(
+                By.id("org.wikipedia:id/search_src_text"),
+                "Java",
+                "Cannot find search input",
+                5);
+
+        waitForElementAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
+                        "//*[@text='Object-oriented programming language']"),
+                "Cannon find Java OOP",
+                5);
+
+        //waitForElementPresent(
+        //        By.id("org.wikipedia:id/view_page_title_text"),
+        //        "Cannot find article title",
+        //        15);
+
+        assertElementPresent(
+                By.id("org.wikipedia:id/view_page_title_text"),
+                "Cannot find article title immediately");
+    }
+
+    private void assertElementPresent(By by, String errorText) {
+        // По опыту, метод findElement все равно ждет какой то стандартный таймаут. Нам же нужно проверить моментально
+        // Поэтому проверка идет по количеству найденных findElements
+        // Тем более что у нас уже есть метод для проверки количества элементов
+        int amountOfElements = getAmountOfElements(by);
+        if (amountOfElements == 0) {
+            String defaultMessage = "An element '" + by.toString() + "' supposed to be present";
+            throw new AssertionError(defaultMessage + " " + errorText);
+        }
+
+    }
+
+    @Test
     public void testSwipeArticle() {
         waitForElementAndClick(
                 By.id("org.wikipedia:id/search_container"),
