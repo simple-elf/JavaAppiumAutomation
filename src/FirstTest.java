@@ -419,6 +419,159 @@ public class FirstTest {
     }
 
     @Test
+    public void saveTwoArticlesToMyListAndRemove() {
+        String firstSearch = "Selenium";
+        String firstSearchTitle = "Selenium (software)";
+        String secondSearch = "Appium";
+        String nameForSavedReadingList = "Learning mobile automation";
+
+        startSearch(firstSearch);
+        checkSearchResultAndOpen(firstSearchTitle);
+        addArticleToNewReadingList(nameForSavedReadingList);
+        closeOpenedArticle();
+
+        startSearch(secondSearch);
+        checkSearchResultAndOpen(secondSearch);
+        addArticleToExistingReadingList(nameForSavedReadingList);
+        closeOpenedArticle();
+
+        openSavedReadingList(nameForSavedReadingList);
+        deleteSavedArticleFromReadingList(firstSearchTitle);
+
+        // Интересно что сработал тот же метод, который использовался в результатах поиска
+        checkSearchResultAndOpen(secondSearch);
+    }
+
+    private void deleteSavedArticleFromReadingList(String articleTitle) {
+        swipeElementToLeft(
+                By.xpath("//*[@text='" + articleTitle + "']"),
+                "Cannot swipe saved article");
+
+        waitForElementNotPresent(
+                By.xpath("//*[@text='" + articleTitle + "']"),
+                "Cannot delete saved article",
+                5);
+    }
+
+    private void openSavedReadingList(String nameForSavedReadingList) {
+        waitForElementAndClick(
+                By.xpath("//android.widget.FrameLayout[@content-desc='My lists']"),
+                "Cannot find button 'My lists'",
+                5);
+
+        waitForElementPresent(
+                By.xpath("//android.widget.TextView[@text='My lists']"),
+                "Cannot find saved lists header 'My lists'",
+                5);
+
+        waitForElementAndClick(
+                By.xpath("//*[@text='" + nameForSavedReadingList + "']"),
+                "Cannon find saved reading list",
+                5);
+    }
+
+    private void addArticleToExistingReadingList(String nameForSavedReadingList) {
+        clickAddArticleToReadingList();
+
+        waitForElementAndClick(
+                By.xpath("//android.widget.TextView[@text='" + nameForSavedReadingList + "']"),
+                "Cannot find existing reading list: " + nameForSavedReadingList,
+                5);
+
+        waitForElementNotPresent(
+                By.xpath("//android.widget.TextView[@text='" + nameForSavedReadingList + "']"),
+                "Name of saved reading list still exists",
+                5);
+    }
+
+    private void closeOpenedArticle() {
+        waitForElementAndClick(
+                By.xpath("//android.widget.ImageButton[@content-desc='Navigate up']"),
+                "Cannot find close article button",
+                5);
+
+        waitForElementPresent(
+                By.id("org.wikipedia:id/search_container"),
+                "Cannot find search button",
+                5);
+    }
+
+    private void clickAddArticleToReadingList() {
+        waitForElementAndClick(
+                By.xpath("//android.widget.ImageView[@content-desc='Add this article to a reading list']"),
+                "Cannot find button for adding article to reading list",
+                5);
+    }
+
+    private void addArticleToNewReadingList(String nameForSavedReadingList) {
+        clickAddArticleToReadingList();
+
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/onboarding_button"),
+                "Cannot find onboarding overlay",
+                5);
+
+        waitForElementAndClear(
+                By.id("org.wikipedia:id/text_input"),
+                "Cannot find input for new reading list",
+                5);
+
+        waitForElementAndSendKeys(
+                By.id("org.wikipedia:id/text_input"),
+                nameForSavedReadingList,
+                "Cannot send text to input for reading list",
+                5);
+
+        System.out.println("Press OK button");
+        waitForElementAndClick(
+                By.xpath("//*[@text='OK']"),
+                "Cannot press OK button",
+                5);
+        waitForElementNotPresent(
+                By.xpath("//*[@text='OK']"),
+                "OK button still exists",
+                5);
+
+        //waitForElementPresent(
+        //        By.id("org.wikipedia:id/view_page_title_text"),
+        //        "Cannot find article title",
+        //        15);
+    }
+
+    private void checkSearchResultAndOpen(String articleTitle) {
+        waitForElementAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_title']" +
+                        "[@text='" + articleTitle + "']"),
+                "Cannon find searched article in results: '" + articleTitle + "'",
+                10);
+
+        WebElement titleElement = waitForElementPresent(
+                By.id("org.wikipedia:id/view_page_title_text"),
+                "Cannot find article title",
+                15);
+
+        checkElementText(titleElement, articleTitle);
+    }
+
+    private void startSearch(String searchString) {
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/search_container"),
+                "Cannot find search button",
+                5);
+
+        waitForElementAndSendKeys(
+                By.id("org.wikipedia:id/search_src_text"),
+                searchString,
+                "Cannot find search input",
+                5);
+
+        waitForElementPresent(
+                By.id("org.wikipedia:id/search_results_list"),
+                "Cannot find search results list",
+                15);
+    }
+
+    @Test
     public void saveFirstArticleToMyList() {
         waitForElementAndClick(
                 By.id("org.wikipedia:id/search_container"),
