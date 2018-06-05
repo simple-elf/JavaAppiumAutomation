@@ -196,6 +196,42 @@ public class FirstTest {
         Assert.assertTrue("We found zero results", amountOfSearchResults > 0);
     }
 
+    @Test
+    public void testAmountOfEmptySearch() {
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/search_container"),
+                "Cannot find search button",
+                5);
+
+        String searchString = "Selenium Selenide Appium";
+        waitForElementAndSendKeys(
+                By.id("org.wikipedia:id/search_src_text"),
+                searchString,
+                "Cannot find search input",
+                5);
+
+        String searchResultLocator = "//*[@resource-id='org.wikipedia:id/search_results_list']" +
+                "/*[@resource-id='org.wikipedia:id/page_list_item_container']";
+        String emptyResultLabel = "//*[@text='No results found']";
+
+        waitForElementPresent(
+                By.xpath(emptyResultLabel),
+                "Cannot find empty result label",
+                15);
+
+        assertElementNotPresent(
+                By.xpath(searchResultLocator),
+                "We found some results by request " + searchString);
+    }
+
+    private void assertElementNotPresent(By by, String errorText) {
+        int amountOfElements = getAmountOfElements(by);
+        if (amountOfElements > 0) {
+            String defaultMessage = "An element '" + by.toString() + "' supposed to be not present";
+            throw new AssertionError(defaultMessage + " " + errorText);
+        }
+    }
+
     private int getAmountOfElements(By by) {
         List elements = driver.findElements(by);
         return elements.size();
