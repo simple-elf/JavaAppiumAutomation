@@ -35,9 +35,9 @@ public class CoreTestCase extends TestCase {
 
     @Override
     public void tearDown() throws Exception{
-        super.tearDown();
-
         driver.quit();
+
+        super.tearDown();
     }
 
 }
