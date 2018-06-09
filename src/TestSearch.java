@@ -1,6 +1,7 @@
 import io.appium.java_client.TouchAction;
 import lib.CoreTestCase;
 import lib.ui.MainPageObject;
+import lib.ui.SearchPageObject;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,27 +26,11 @@ public class TestSearch extends CoreTestCase {
 
     @Test
     public void testSearchAndCheck() {
-        mainPageObject.waitForElementAndClick(
-                By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
-                "Cannot find search button",
-                5);
+        SearchPageObject searchPageObject = new SearchPageObject(driver);
 
-        WebElement searchInput = mainPageObject.waitForElementPresent(
-                By.id("org.wikipedia:id/search_src_text"),
-                "Cannot find search input");
-        mainPageObject.checkElementText(searchInput, "Search…");
-
-        mainPageObject.waitForElementAndSendKeys(
-                By.xpath("//*[contains(@text, 'Search…')]"),
-                "Java",
-                "Cannot find search input",
-                5);
-
-        mainPageObject.waitForElementPresent(
-                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
-                        "//*[@text='Object-oriented programming language']"),
-                "Cannon find Java OOP",
-                15);
+        searchPageObject.initSearchInput();
+        searchPageObject.typeSearchInput("Java");
+        searchPageObject.waitForSearchResult("Object-oriented programming language");
     }
 
     /**
