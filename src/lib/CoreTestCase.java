@@ -26,6 +26,8 @@ public class CoreTestCase extends TestCase {
         capabilities.setCapability("appPackage","org.wikipedia");
         capabilities.setCapability("appActivity",".main.MainActivity");
         capabilities.setCapability("app","C:\\Users\\simpl\\IdeaProjects\\JavaAppiumAutomation\\apks\\org.wikipedia.apk");
+        //for MacOs
+        //capabilities.setCapability("app","/Users/simple1elf/IdeaProjects/JavaAppiumAutomation/apks/org.wikipedia.apk");
 
         driver = new AndroidDriver(new URL(AppiumURL), capabilities);
         // Ex7*: Поворот экрана
