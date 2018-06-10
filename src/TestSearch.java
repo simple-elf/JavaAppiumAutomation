@@ -42,46 +42,18 @@ public class TestSearch extends CoreTestCase {
      */
     @Test
     public void testCancelSearch() {
-        mainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/search_container"),
-                "Cannot find search button",
-                5);
+        SearchPageObject searchPageObject = new SearchPageObject(driver);
 
-        mainPageObject.waitForElementAndSendKeys(
-                By.id("org.wikipedia:id/search_src_text"),
-                "Java",
-                "Cannot find search input",
-                5);
+        searchPageObject.initSearchInput();
+        searchPageObject.typeSearchInput("Java");
+        searchPageObject.waitForSearchResultsListNotEmpty();
 
-        WebElement searchResultsList = mainPageObject.waitForElementPresent(
-                By.id("org.wikipedia:id/search_results_list"),
-                "Cannot find search results list",
-                15);
+        searchPageObject.clearSearchInput();
+        searchPageObject.waitForSearchEmptyMessage();
 
-        List<WebElement> searchResults = searchResultsList.findElements(By.className("android.widget.LinearLayout"));
-        System.out.println("Size: " + searchResults.size());
-        Assert.assertTrue("There is no search results", searchResults.size() > 0);
-
-        mainPageObject.waitForElementAndClear(
-                By.id("org.wikipedia:id/search_src_text"),
-                "Cannot find search input",
-                5);
-
-        WebElement emptyMessage = mainPageObject.waitForElementPresent(
-                By.id("org.wikipedia:id/search_empty_message"),
-                "Cannot find empty message",
-                5);
-        mainPageObject.checkElementText(emptyMessage, "Search and read the free encyclopedia in your language");
-
-        mainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/search_close_btn"),
-                "Cannot find close button",
-                5);
-
-        mainPageObject.waitForElementNotPresent(
-                By.id("org.wikipedia:id/search_close_btn"),
-                "Close button is still on page",
-                5);
+        searchPageObject.waitForCancelButtonToAppear();
+        searchPageObject.clickCancelSearch();
+        searchPageObject.waitForCancelButtonToDisappear();
     }
 
     /**
