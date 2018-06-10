@@ -1,5 +1,6 @@
 import io.appium.java_client.TouchAction;
 import lib.CoreTestCase;
+import lib.ui.ArticlePageObject;
 import lib.ui.MainPageObject;
 import lib.ui.SearchPageObject;
 import org.hamcrest.CoreMatchers;
@@ -202,31 +203,16 @@ public class TestSearch extends CoreTestCase {
 
     @Test
     public void testCompareArticleTitle() {
-        mainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/search_container"),
-                "Cannot find search button",
-                5);
+        SearchPageObject searchPageObject = new SearchPageObject(driver);
 
-        mainPageObject.waitForElementAndSendKeys(
-                By.id("org.wikipedia:id/search_src_text"),
-                "Java",
-                "Cannot find search input",
-                5);
+        searchPageObject.initSearchInput();
+        searchPageObject.typeSearchInput("Java");
+        searchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
 
-        mainPageObject.waitForElementAndClick(
-                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
-                        "//*[@text='Object-oriented programming language']"),
-                "Cannon find Java OOP",
-                5);
+        ArticlePageObject articlePageObject = new ArticlePageObject(driver);
+        String articleTitle = articlePageObject.getArticleTitle();
 
-        WebElement titleElement = mainPageObject.waitForElementPresent(
-                By.id("org.wikipedia:id/view_page_title_text"),
-                "Cannot find article title",
-                15);
-
-        //String articleTitle = titleElement.getAttribute("text");
-        //Assert.assertEquals("Were are unexpected title!", "Java (programming language)", articleTitle);
-        mainPageObject.checkElementText(titleElement, "Java (programming language)");
+        Assert.assertEquals("Element text is not expected!", "Java (programming language)", articleTitle);
     }
 
     @Test
@@ -260,32 +246,15 @@ public class TestSearch extends CoreTestCase {
 
     @Test
     public void testSwipeArticle() {
-        mainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/search_container"),
-                "Cannot find search button",
-                5);
+        SearchPageObject searchPageObject = new SearchPageObject(driver);
 
-        mainPageObject.waitForElementAndSendKeys(
-                By.id("org.wikipedia:id/search_src_text"),
-                "Appium",
-                "Cannot find search input",
-                5);
+        searchPageObject.initSearchInput();
+        searchPageObject.typeSearchInput("Appium");
+        searchPageObject.clickByArticleWithSubstring("Appium");
 
-        mainPageObject.waitForElementAndClick(
-                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_title'][@text='Appium']"),
-                "Cannon find Appium",
-                5);
-
-        mainPageObject.waitForElementPresent(
-                By.id("org.wikipedia:id/view_page_title_text"),
-                "Cannot find article title",
-                15);
-
-        mainPageObject.swipeUpToFindElement(
-                By.xpath("//*[@text='View page in browser']"),
-                "Cannot find footer element",
-                10);
-
+        ArticlePageObject articlePageObject = new ArticlePageObject(driver);
+        articlePageObject.waitForTitleElement();
+        articlePageObject.swipeToFooter();
     }
 
     @Test

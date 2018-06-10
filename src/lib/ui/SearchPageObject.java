@@ -59,6 +59,10 @@ public class SearchPageObject extends MainPageObject {
         this.waitForElementPresent(By.xpath(getResultSearchElement(subString)), "Cannon find search result with substring " + subString, 15);
     }
 
+    public void clickByArticleWithSubstring(String subString) {
+        this.waitForElementAndClick(By.xpath(getResultSearchElement(subString)), "Cannon find and click search result with substring " + subString, 10);
+    }
+
     public void waitForSearchResultsListNotEmpty() {
         WebElement searchResultsList =
                 this.waitForElementPresent(By.id(SEARCH_RESULTS_LIST), "Cannot find search results list", 15);

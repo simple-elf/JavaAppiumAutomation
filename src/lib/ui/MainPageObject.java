@@ -227,20 +227,13 @@ public class MainPageObject {
             String defaultMessage = "An element '" + by.toString() + "' supposed to be present";
             throw new AssertionError(defaultMessage + " " + errorText);
         }
-
     }
 
     public void searchAndCheckResults(String searchString) {
-        waitForElementAndClick(
-                By.id("org.wikipedia:id/search_container"),
-                "Cannot find search button",
-                5);
+        SearchPageObject searchPageObject = new SearchPageObject(driver);
 
-        waitForElementAndSendKeys(
-                By.id("org.wikipedia:id/search_src_text"),
-                searchString,
-                "Cannot find search input",
-                5);
+        searchPageObject.initSearchInput();
+        searchPageObject.typeSearchInput(searchString);
 
         WebElement searchResults = waitForElementPresent(
                 By.id("org.wikipedia:id/search_results_list"),
