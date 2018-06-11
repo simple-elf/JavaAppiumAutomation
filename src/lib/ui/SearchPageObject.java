@@ -18,7 +18,10 @@ public class SearchPageObject extends MainPageObject {
             SEARCH_RESULTS_LIST = "org.wikipedia:id/search_results_list",
             SEARCH_RESULTS_LIST_ITEM = "android.widget.LinearLayout",
             SEARCH_RESULT_BY_SUBSTRING_TPL =
-                    "//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='{SUBSTRING}']";
+                    "//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='{SUBSTRING}']",
+            SEARCH_RESULTS_ELEMENT = "//*[@resource-id='org.wikipedia:id/search_results_list']" +
+                    "/*[@resource-id='org.wikipedia:id/page_list_item_container']",
+            EMPTY_RESULT_LABEL = "//*[@text='No results found']";
 
     public SearchPageObject(AppiumDriver driver) {
         super(driver);
@@ -85,6 +88,28 @@ public class SearchPageObject extends MainPageObject {
         WebElement emptyMessage =
                 this.waitForElementPresent(By.id(SEARCH_EMPTY_MESSAGE), "Cannot find empty search message", 5);
         this.checkElementText(emptyMessage, SEARCH_EMPTY_MESSAGE_TEXT);
+    }
+
+    public int getAmountOfFoundArticles() {
+        this.waitForElementPresent(
+                By.xpath(SEARCH_RESULTS_ELEMENT),
+                "Cannot find search results list",
+                15);
+
+        return this.getAmountOfElements(By.xpath(SEARCH_RESULTS_ELEMENT));
+    }
+
+    public void waitForEmptyResultsLabel() {
+        this.waitForElementPresent(
+                By.xpath(EMPTY_RESULT_LABEL),
+                "Cannot find empty result label",
+                15);
+    }
+
+    public void assertThereIsNoResultOfSearch() {
+        this.assertElementNotPresent(
+                By.xpath(SEARCH_RESULTS_ELEMENT),
+                "We supposed not to find any results");
     }
 
 }

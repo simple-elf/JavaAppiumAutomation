@@ -38,50 +38,6 @@ public class MainPageObject {
         return elements.size();
     }
 
-    public void deleteSavedArticleFromReadingList(String articleTitle) {
-        swipeElementToLeft(
-                By.xpath("//*[@text='" + articleTitle + "']"),
-                "Cannot swipe saved article");
-
-        waitForElementNotPresent(
-                By.xpath("//*[@text='" + articleTitle + "']"),
-                "Cannot delete saved article",
-                5);
-    }
-
-    public void checkSearchResultAndOpen(String articleTitle) {
-        waitForElementAndClick(
-                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_title']" +
-                        "[@text='" + articleTitle + "']"),
-                "Cannon find searched article in results: '" + articleTitle + "'",
-                10);
-
-        WebElement titleElement = waitForElementPresent(
-                By.id("org.wikipedia:id/view_page_title_text"),
-                "Cannot find article title",
-                15);
-
-        checkElementText(titleElement, articleTitle);
-    }
-
-    public void startSearch(String searchString) {
-        waitForElementAndClick(
-                By.id("org.wikipedia:id/search_container"),
-                "Cannot find search button",
-                5);
-
-        waitForElementAndSendKeys(
-                By.id("org.wikipedia:id/search_src_text"),
-                searchString,
-                "Cannot find search input",
-                5);
-
-        waitForElementPresent(
-                By.id("org.wikipedia:id/search_results_list"),
-                "Cannot find search results list",
-                15);
-    }
-
     public void swipeElementToLeft(By by, String errorText) {
         WebElement element = waitForElementPresent(
                 by,

@@ -1,17 +1,9 @@
-import io.appium.java_client.TouchAction;
 import lib.CoreTestCase;
 import lib.ui.*;
-import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.ScreenOrientation;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.util.List;
 
 public class TestSearch extends CoreTestCase {
 
@@ -71,56 +63,26 @@ public class TestSearch extends CoreTestCase {
 
     @Test
     public void testAmountOfNotEmptySearch() {
-        mainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/search_container"),
-                "Cannot find search button",
-                5);
+        SearchPageObject searchPageObject = new SearchPageObject(driver);
 
+        searchPageObject.initSearchInput();
         String searchString = "Avril Lavigne discography";
-        mainPageObject.waitForElementAndSendKeys(
-                By.id("org.wikipedia:id/search_src_text"),
-                searchString,
-                "Cannot find search input",
-                5);
-
-        String searchResultLocator = "//*[@resource-id='org.wikipedia:id/search_results_list']" +
-                "/*[@resource-id='org.wikipedia:id/page_list_item_container']";
-        mainPageObject.waitForElementPresent(
-                By.xpath(searchResultLocator),
-                "Cannot find search results list",
-                15);
-
-        int amountOfSearchResults = mainPageObject.getAmountOfElements(By.xpath(searchResultLocator));
+        searchPageObject.typeSearchInput(searchString);
+        int amountOfSearchResults = searchPageObject.getAmountOfFoundArticles();
 
         Assert.assertTrue("We found zero results", amountOfSearchResults > 0);
     }
 
     @Test
     public void testAmountOfEmptySearch() {
-        mainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/search_container"),
-                "Cannot find search button",
-                5);
+        SearchPageObject searchPageObject = new SearchPageObject(driver);
 
+        searchPageObject.initSearchInput();
         String searchString = "Selenium Selenide Appium";
-        mainPageObject.waitForElementAndSendKeys(
-                By.id("org.wikipedia:id/search_src_text"),
-                searchString,
-                "Cannot find search input",
-                5);
+        searchPageObject.typeSearchInput(searchString);
 
-        String searchResultLocator = "//*[@resource-id='org.wikipedia:id/search_results_list']" +
-                "/*[@resource-id='org.wikipedia:id/page_list_item_container']";
-        String emptyResultLabel = "//*[@text='No results found']";
-
-        mainPageObject.waitForElementPresent(
-                By.xpath(emptyResultLabel),
-                "Cannot find empty result label",
-                15);
-
-        mainPageObject.assertElementNotPresent(
-                By.xpath(searchResultLocator),
-                "We found some results by request " + searchString);
+        searchPageObject.waitForEmptyResultsLabel();
+        searchPageObject.assertThereIsNoResultOfSearch();
     }
 
     @Test
