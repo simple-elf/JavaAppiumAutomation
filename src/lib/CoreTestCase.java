@@ -31,7 +31,7 @@ public class CoreTestCase extends TestCase {
 
         driver = new AndroidDriver(new URL(AppiumURL), capabilities);
         // Ex7*: Поворот экрана
-        driver.rotate(ScreenOrientation.PORTRAIT);
+        this.rotateScreenPortrait();
         // Перед запуском каждого теста (а именно так работает @Before в junit) поворачивать экран в стандартное вертикальное (портретное) положение
     }
 
@@ -40,6 +40,18 @@ public class CoreTestCase extends TestCase {
         driver.quit();
 
         super.tearDown();
+    }
+
+    protected void rotateScreenPortrait() {
+        driver.rotate(ScreenOrientation.PORTRAIT);
+    }
+
+    protected void rotateScreenLandscape() {
+        driver.rotate(ScreenOrientation.LANDSCAPE);
+    }
+
+    protected void backgroundApp(int seconds) {
+        driver.runAppInBackground(seconds);
     }
 
 }

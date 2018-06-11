@@ -87,78 +87,40 @@ public class TestSearch extends CoreTestCase {
 
     @Test
     public void testChangeScreenRotationOnSearchResults() {
-        mainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/search_container"),
-                "Cannot find search button",
-                5);
+        SearchPageObject searchPageObject = new SearchPageObject(driver);
 
-        String searchString = "Java";
-        mainPageObject.waitForElementAndSendKeys(
-                By.id("org.wikipedia:id/search_src_text"),
-                searchString,
-                "Cannot find search input",
-                5);
+        searchPageObject.initSearchInput();
+        searchPageObject.typeSearchInput("Java");
+        searchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
 
-        mainPageObject.waitForElementAndClick(
-                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
-                        "//*[@text='Object-oriented programming language']"),
-                "Cannon find Java OOP by search " + searchString,
-                15);
+        ArticlePageObject articlePageObject = new ArticlePageObject(driver);
+        String titleBeforeRotation = articlePageObject.getArticleTitle();
 
-        String titleBeforeRotation = mainPageObject.waitForElementAndGetAttr(
-                By.id("org.wikipedia:id/view_page_title_text"),
-                "text",
-                "Cannot find article title",
-                15);
+        this.rotateScreenLandscape();
+        String titleAfterRotation = articlePageObject.getArticleTitle();
+        Assert.assertEquals(
+                "Article title have been change after screen rotation",
+                titleBeforeRotation,
+                titleAfterRotation);
 
-        driver.rotate(ScreenOrientation.LANDSCAPE);
-
-        String titleAfterRotation = mainPageObject.waitForElementAndGetAttr(
-                By.id("org.wikipedia:id/view_page_title_text"),
-                "text",
-                "Cannot find article title",
-                15);
-
-        Assert.assertEquals("Article title have been change after screen rotation", titleBeforeRotation, titleAfterRotation);
-
-        driver.rotate(ScreenOrientation.PORTRAIT);
-
-        String titleAfterSecondRotation = mainPageObject.waitForElementAndGetAttr(
-                By.id("org.wikipedia:id/view_page_title_text"),
-                "text",
-                "Cannot find article title",
-                15);
-
-        Assert.assertEquals("Article title have been change after screen rotation", titleBeforeRotation, titleAfterSecondRotation);
+        this.rotateScreenPortrait();
+        String titleAfterSecondRotation = articlePageObject.getArticleTitle();
+        Assert.assertEquals(
+                "Article title have been change after screen rotation",
+                titleBeforeRotation,
+                titleAfterSecondRotation);
     }
 
     @Test
-    public void testCheckSearchArticleInBackgroud() {
-        mainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/search_container"),
-                "Cannot find search button",
-                5);
+    public void testCheckSearchArticleInBackground() {
+        SearchPageObject searchPageObject = new SearchPageObject(driver);
 
-        String searchString = "Java";
-        mainPageObject.waitForElementAndSendKeys(
-                By.id("org.wikipedia:id/search_src_text"),
-                searchString,
-                "Cannot find search input",
-                5);
+        searchPageObject.initSearchInput();
+        searchPageObject.typeSearchInput("Java");
+        searchPageObject.waitForSearchResult("Object-oriented programming language");
 
-        mainPageObject.waitForElementPresent(
-                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
-                        "//*[@text='Object-oriented programming language']"),
-                "Cannon find Java OOP by search " + searchString,
-                15);
-
-        driver.runAppInBackground(2);
-
-        mainPageObject.waitForElementPresent(
-                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
-                        "//*[@text='Object-oriented programming language']"),
-                "Cannon find article 'Java OOP' after returning from background",
-                15);
+        this.backgroundApp(3);
+        searchPageObject.waitForSearchResult("Object-oriented programming language");
     }
 
     @Test
