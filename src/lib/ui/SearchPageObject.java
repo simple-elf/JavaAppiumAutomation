@@ -1,6 +1,7 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -16,7 +17,9 @@ public class SearchPageObject extends MainPageObject {
             SEARCH_EMPTY_MESSAGE = "org.wikipedia:id/search_empty_message",
             SEARCH_EMPTY_MESSAGE_TEXT = "Search and read the free encyclopedia in your language",
             SEARCH_RESULTS_LIST = "org.wikipedia:id/search_results_list",
-            SEARCH_RESULTS_LIST_ITEM = "android.widget.LinearLayout",
+            //SEARCH_RESULTS_LIST_ITEM = "android.widget.LinearLayout",
+            SEARCH_RESULTS_LIST_ITEM = "org.wikipedia:id/page_list_item_container", // fix search locator
+            SEARCH_RESULTS_LIST_ITEM_TITLE = "org.wikipedia:id/page_list_item_title",
             SEARCH_RESULT_BY_SUBSTRING_TPL =
                     "//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='{SUBSTRING}']",
             SEARCH_RESULTS_ELEMENT = "//*[@resource-id='org.wikipedia:id/search_results_list']" +
@@ -34,25 +37,44 @@ public class SearchPageObject extends MainPageObject {
     /* TEMPLATE METHODS */
 
     public void initSearchInput() {
-        this.waitForElementAndClick(By.xpath(SEARCH_INIT_ELEMENT), "Cannot find and click search button", 5);
-        WebElement searchInput = this.waitForElementPresent(By.id(SEARCH_INPUT), "Cannot find search input");
+        this.waitForElementAndClick(
+                By.xpath(SEARCH_INIT_ELEMENT),
+                "Cannot find and click search button",
+                5);
+        WebElement searchInput = this.waitForElementPresent(
+                By.id(SEARCH_INPUT),
+                "Cannot find search input",
+                5);
         this.checkElementText(searchInput, "Search…");
     }
 
     public void waitForCancelButtonToAppear() {
-        this.waitForElementPresent(By.id(SEARCH_CANCEL_BUTTON), "Cannot find search cancel button", 5);
+        this.waitForElementPresent(
+                By.id(SEARCH_CANCEL_BUTTON),
+                "Cannot find search cancel button",
+                5);
     }
 
     public void waitForCancelButtonToDisappear() {
-        this.waitForElementNotPresent(By.id(SEARCH_CANCEL_BUTTON), "Search cancel button is still present", 5);
+        this.waitForElementNotPresent(
+                By.id(SEARCH_CANCEL_BUTTON),
+                "Search cancel button is still present",
+                5);
     }
 
     public void clickCancelSearch() {
-        this.waitForElementAndClick(By.id(SEARCH_CANCEL_BUTTON), "Cannot find and click search cancel button", 5);
+        this.waitForElementAndClick(
+                By.id(SEARCH_CANCEL_BUTTON),
+                "Cannot find and click search cancel button",
+                5);
     }
 
     public void typeSearchInput(String searchString) {
-        this.waitForElementAndSendKeys(By.id(SEARCH_INPUT), searchString, "Cannot find and type into search input", 5);
+        this.waitForElementAndSendKeys(
+                By.id(SEARCH_INPUT),
+                searchString,
+                "Cannot find and type into search input",
+                5);
     }
 
     public void clearSearchInput() {
@@ -77,16 +99,28 @@ public class SearchPageObject extends MainPageObject {
     }
 
     public void waitForSearchResultsListNotEmpty() {
-        WebElement searchResultsList =
-                this.waitForElementPresent(By.id(SEARCH_RESULTS_LIST), "Cannot find search results list", 15);
-        List<WebElement> searchResults = searchResultsList.findElements(By.className(SEARCH_RESULTS_LIST_ITEM));
-        //System.out.println("Size: " + searchResults.size());
+        List<WebElement> searchResults = getSearchResultsList();
+        System.out.println("Size: " + searchResults.size());
         Assert.assertTrue("There is no search results", searchResults.size() > 0);
     }
 
+    public List<WebElement> getSearchResultsList() {
+        WebElement searchResultsList = this.waitForElementPresent(
+                By.id(SEARCH_RESULTS_LIST),
+                "Cannot find search results list",
+                15);
+        return searchResultsList.findElements(By.id(SEARCH_RESULTS_LIST_ITEM));
+    }
+
+    public String getSearchResultItemTitle(WebElement searchResultItem) {
+        return searchResultItem.findElement(By.id(SEARCH_RESULTS_LIST_ITEM_TITLE)).getText();
+    }
+
     public void waitForSearchEmptyMessage() {
-        WebElement emptyMessage =
-                this.waitForElementPresent(By.id(SEARCH_EMPTY_MESSAGE), "Cannot find empty search message", 5);
+        WebElement emptyMessage = this.waitForElementPresent(
+                By.id(SEARCH_EMPTY_MESSAGE),
+                "Cannot find empty search message",
+                5);
         this.checkElementText(emptyMessage, SEARCH_EMPTY_MESSAGE_TEXT);
     }
 
@@ -110,6 +144,28 @@ public class SearchPageObject extends MainPageObject {
         this.assertElementNotPresent(
                 By.xpath(SEARCH_RESULTS_ELEMENT),
                 "We supposed not to find any results");
+    }
+
+    public void searchAndCheckResults(String searchString) {
+        this.initSearchInput();
+        this.typeSearchInput(searchString);
+        this.waitForSearchResultsListNotEmpty();
+
+        List<WebElement> searchResultsList = this.getSearchResultsList();
+        searchResultsList.remove(searchResultsList.size() - 1); // fix to remove last partly visible line
+        System.out.println("Size: " + searchResultsList.size());
+
+        for (WebElement searchItem : searchResultsList) {
+            String searchItemTitle = this.getSearchResultItemTitle(searchItem);
+            System.out.println("searchItemTitle: " + searchItemTitle);
+            Assert.assertThat(
+                    "Search result item doesn't contains search text",
+                    searchItemTitle,
+                    CoreMatchers.containsString(searchString));
+        }
+
+        this.clearSearchInput();
+        this.waitForSearchEmptyMessage();
     }
 
 }

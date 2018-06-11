@@ -2,7 +2,6 @@ package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.TouchAction;
-import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -98,38 +97,6 @@ public class MainPageObject {
             String defaultMessage = "An element '" + by.toString() + "' supposed to be present";
             throw new AssertionError(defaultMessage + " " + errorText);
         }
-    }
-
-    public void searchAndCheckResults(String searchString) {
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
-
-        searchPageObject.initSearchInput();
-        searchPageObject.typeSearchInput(searchString);
-
-        WebElement searchResults = waitForElementPresent(
-                By.id("org.wikipedia:id/search_results_list"),
-                "Cannot find search results list",
-                15);
-
-        List<WebElement> searchResultsList = searchResults.findElements(By.id("org.wikipedia:id/page_list_item_container")); // fix search locator
-        searchResultsList.remove(searchResultsList.size() - 1);
-        System.out.println("Size: " + searchResultsList.size());
-
-        for (WebElement searchItem : searchResultsList) {
-            String searchItemTitle = searchItem.findElement(By.id("org.wikipedia:id/page_list_item_title")).getText();
-            System.out.println("searchItemTitle: " + searchItemTitle);
-            Assert.assertThat("Search result item doesn't contains search text", searchItemTitle, CoreMatchers.containsString(searchString));
-        }
-
-        waitForElementAndClear(
-                By.id("org.wikipedia:id/search_src_text"),
-                "Cannot find search input",
-                5);
-
-        WebElement emptyMessage = waitForElementPresent(
-                By.id("org.wikipedia:id/search_empty_message"),
-                "Cannot find empty message",
-                5);
     }
 
     /**

@@ -24,6 +24,12 @@ public class ArticlePageObject extends MainPageObject {
         super(driver);
     }
 
+    public void checkTitleElementImmideatly() {
+        this.assertElementPresent(
+                By.id(TITLE),
+                "Cannot find article title immediately");
+    }
+
     public WebElement waitForTitleElement() {
         return this.waitForElementPresent(By.id(TITLE), "Cannot find article title", 15);
     }
