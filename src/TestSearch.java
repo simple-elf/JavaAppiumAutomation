@@ -1,8 +1,6 @@
 import io.appium.java_client.TouchAction;
 import lib.CoreTestCase;
-import lib.ui.ArticlePageObject;
-import lib.ui.MainPageObject;
-import lib.ui.SearchPageObject;
+import lib.ui.*;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -264,118 +262,62 @@ public class TestSearch extends CoreTestCase {
         String secondSearch = "Appium";
         String nameForSavedReadingList = "Learning mobile automation";
 
-        mainPageObject.startSearch(firstSearch);
-        mainPageObject.checkSearchResultAndOpen(firstSearchTitle);
-        mainPageObject.addArticleToNewReadingList(nameForSavedReadingList);
-        mainPageObject.closeOpenedArticle();
+        SearchPageObject searchPageObject = new SearchPageObject(driver);
 
-        mainPageObject.startSearch(secondSearch);
-        mainPageObject.checkSearchResultAndOpen(secondSearch);
-        mainPageObject.addArticleToExistingReadingList(nameForSavedReadingList);
-        mainPageObject.closeOpenedArticle();
+        searchPageObject.initSearchInput();
+        searchPageObject.typeSearchInput(firstSearch);
+        searchPageObject.clickByArticleWithSubstring(firstSearchTitle);
 
-        mainPageObject.openSavedReadingList(nameForSavedReadingList);
-        mainPageObject.deleteSavedArticleFromReadingList(firstSearchTitle);
+        ArticlePageObject articlePageObject = new ArticlePageObject(driver);
+        articlePageObject.waitForTitleElement();
+        articlePageObject.addArticleToNewReadingList(nameForSavedReadingList);
+        articlePageObject.closeOpenedArticle();
+
+
+        searchPageObject.initSearchInput();
+        searchPageObject.typeSearchInput(secondSearch);
+        searchPageObject.clickByArticleWithSubstring(secondSearch);
+
+        articlePageObject.waitForTitleElement();
+        articlePageObject.addArticleToExistingReadingList(nameForSavedReadingList);
+        articlePageObject.closeOpenedArticle();
+
+
+        NavigationUI navigationUI = new NavigationUI(driver);
+        navigationUI.openMyLists();
+
+        MyListsPageObject myListsPageObject = new MyListsPageObject(driver);
+        myListsPageObject.openFolderByName(nameForSavedReadingList);
+        myListsPageObject.swipeByArticleToDelete(firstSearchTitle);
 
         // Интересно что сработал тот же метод, который использовался в результатах поиска
-        mainPageObject.checkSearchResultAndOpen(secondSearch);
+        searchPageObject.clickByArticleWithSubstring(secondSearch);
+        articlePageObject.waitForTitleElement();
+        articlePageObject.closeOpenedArticle();
     }
 
     @Test
     public void testSaveFirstArticleToMyList() {
-        mainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/search_container"),
-                "Cannot find search button",
-                5);
+        SearchPageObject searchPageObject = new SearchPageObject(driver);
 
-        mainPageObject.waitForElementAndSendKeys(
-                By.id("org.wikipedia:id/search_src_text"),
-                "Java",
-                "Cannot find search input",
-                5);
+        searchPageObject.initSearchInput();
+        searchPageObject.typeSearchInput("Java");
+        searchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
 
-        mainPageObject.waitForElementAndClick(
-                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
-                        "//*[@text='Object-oriented programming language']"),
-                "Cannon find Java OOP",
-                5);
-
-        mainPageObject.waitForElementPresent(
-                By.id("org.wikipedia:id/view_page_title_text"),
-                "Cannot find article title",
-                15);
-
-        mainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.ImageView[@content-desc='More options']"),
-                "Cannot find options button",
-                5);
-
-        mainPageObject.waitForElementAndClick(
-                By.xpath("//*[@text='Add to reading list']"),
-                "Cannot find option for adding to reading list",
-                5);
-
-        mainPageObject.waitForElementAndClick(
-                By.id("org.wikipedia:id/onboarding_button"),
-                "Cannot find onboarding overlay",
-                5);
-
-        mainPageObject.waitForElementAndClear(
-                By.id("org.wikipedia:id/text_input"),
-                "Cannot find input for new reading list",
-                5);
-
+        ArticlePageObject articlePageObject = new ArticlePageObject(driver);
+        //articlePageObject.waitForTitleElement();
+        String articleTitle = articlePageObject.getArticleTitle();
         String nameForSavedReadingList = "Learning programming";
 
-        mainPageObject.waitForElementAndSendKeys(
-                By.id("org.wikipedia:id/text_input"),
-                nameForSavedReadingList,
-                "Cannot send text to input for reading list",
-                5);
+        articlePageObject.addArticleToNewReadingList(nameForSavedReadingList);
+        articlePageObject.closeOpenedArticle();
 
-        System.out.println("Press OK button");
-        mainPageObject.waitForElementAndClick(
-                By.xpath("//*[@text='OK']"),
-                "Cannot press OK button",
-                5);
-        mainPageObject.waitForElementNotPresent(
-                By.xpath("//*[@text='OK']"),
-                "OK button still exists",
-                5);
+        NavigationUI navigationUI = new NavigationUI(driver);
+        navigationUI.openMyLists();
 
-        mainPageObject.waitForElementPresent(
-                By.id("org.wikipedia:id/view_page_title_text"),
-                "Cannot find article title",
-                15);
-
-        mainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.ImageButton[@content-desc='Navigate up']"),
-                "Cannot find close article button",
-                5);
-
-        mainPageObject.waitForElementAndClick(
-                By.xpath("//android.widget.FrameLayout[@content-desc='My lists']"),
-                "Cannot find button 'My lists'",
-                5);
-
-        mainPageObject.waitForElementPresent(
-                By.xpath("//android.widget.TextView[@text='My lists']"),
-                "Cannot find saved lists header",
-                5);
-
-        mainPageObject.waitForElementAndClick(
-                By.xpath("//*[@text='" + nameForSavedReadingList + "']"),
-                "Cannon find saved reading list",
-                5);
-
-        mainPageObject.swipeElementToLeft(
-                By.xpath("//*[@text='Java (programming language)']"),
-                "Cannot swipe saved article");
-
-        mainPageObject.waitForElementNotPresent(
-                By.xpath("//*[@text='Java (programming language)']"),
-                "Cannot delete saved article",
-                5);
+        MyListsPageObject myListsPageObject = new MyListsPageObject(driver);
+        myListsPageObject.openFolderByName(nameForSavedReadingList);
+        myListsPageObject.swipeByArticleToDelete(articleTitle);
     }
 
 }
