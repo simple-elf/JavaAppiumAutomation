@@ -21,9 +21,13 @@ public class SearchPageObject extends MainPageObject {
             SEARCH_RESULTS_LIST_ITEM = "org.wikipedia:id/page_list_item_container", // fix search locator
             SEARCH_RESULTS_LIST_ITEM_TITLE = "org.wikipedia:id/page_list_item_title",
             SEARCH_RESULT_BY_SUBSTRING_TPL =
-                    "//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='{SUBSTRING}']",
-            SEARCH_RESULTS_ELEMENT = "//*[@resource-id='org.wikipedia:id/search_results_list']" +
-                    "/*[@resource-id='org.wikipedia:id/page_list_item_container']",
+                    "//*[@resource-id='" + SEARCH_RESULTS_LIST_ITEM + "']//*[@text='{SUBSTRING}']",
+            SEARCH_RESULTS_ELEMENT = "//*[@resource-id='" + SEARCH_RESULTS_LIST + "']" +
+                    "/*[@resource-id='" + SEARCH_RESULTS_LIST_ITEM + "']",
+            SEARCH_RESULT_BY_TITLE_AND_DESCRIPTION =
+                    "//*[@resource-id='" + SEARCH_RESULTS_LIST_ITEM + "']" +
+                    "//*[@resource-id='" + SEARCH_RESULTS_LIST_ITEM_TITLE + "'][@text='{TITLE}']/" +
+                    "../*[@resource-id='org.wikipedia:id/page_list_item_description'][@text='{DESCRIPTION}']",
             EMPTY_RESULT_LABEL = "//*[@text='No results found']";
 
     public SearchPageObject(AppiumDriver driver) {
@@ -33,6 +37,12 @@ public class SearchPageObject extends MainPageObject {
     /* TEMPLATE METHODS */
     private static String getResultSearchElement(String subString) {
         return SEARCH_RESULT_BY_SUBSTRING_TPL.replace("{SUBSTRING}", subString);
+    }
+
+    private static String getResultSearchElementByTitleAndDescription(String title, String description) {
+        return SEARCH_RESULT_BY_TITLE_AND_DESCRIPTION
+                .replace("{TITLE}", title)
+                .replace("{DESCRIPTION}", description);
     }
     /* TEMPLATE METHODS */
 
@@ -166,6 +176,13 @@ public class SearchPageObject extends MainPageObject {
 
         this.clearSearchInput();
         this.waitForSearchEmptyMessage();
+    }
+
+    public void waitForElementByTitleAndDescription(String title, String description) {
+        this.waitForElementPresent(
+                By.xpath(getResultSearchElementByTitleAndDescription(title, description)),
+                "Cannot find search result by title '" + title + "' and description '" + description + "'",
+                5);
     }
 
 }

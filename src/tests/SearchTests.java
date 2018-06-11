@@ -78,4 +78,48 @@ public class SearchTests extends CoreTestCase {
         //searchPageObject.searchAndCheckResults("Appium"); // fails because second item is AppImage
     }
 
+    @Test
+    public void testSearchAndCheckResultsByTitleAndDescription() {
+        SearchPageObject searchPageObject = new SearchPageObject(driver);
+
+        searchPageObject.initSearchInput();
+
+        searchPageObject.typeSearchInput("Java");
+        searchPageObject.waitForElementByTitleAndDescription(
+                "Java",
+                "Island of Indonesia");
+        searchPageObject.waitForElementByTitleAndDescription(
+                "Java (programming language)",
+                "Object-oriented programming language");
+        searchPageObject.waitForElementByTitleAndDescription(
+                "JavaScript",
+                "Programming language");
+        searchPageObject.clickCancelSearch();
+
+        searchPageObject.typeSearchInput("Apollo");
+        searchPageObject.waitForElementByTitleAndDescription(
+                "Apollo",
+                "God in Greek mythology");
+        searchPageObject.waitForElementByTitleAndDescription(
+                "Apollo 11",
+                "First spaceflight that landed humans on the Moon");
+        searchPageObject.waitForElementByTitleAndDescription(
+                "Apollo program",
+                "American human spaceflight program");
+        searchPageObject.clickCancelSearch();
+
+        searchPageObject.typeSearchInput("Selenium");
+        searchPageObject.waitForElementByTitleAndDescription(
+                "Selenium",
+                "Chemical element with atomic number of 34");
+        searchPageObject.waitForElementByTitleAndDescription(
+                "Selenium (software)",
+                "Testing framework for web applications");
+        // Тут второй результат поиска с пустым description, но при этом элмента вообще нет
+        //searchPageObject.waitForElementByTitleAndDescription(
+        //        "Selenium in biology",
+        //        "");
+        searchPageObject.clickCancelSearch();
+    }
+
 }
