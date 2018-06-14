@@ -6,18 +6,19 @@ import org.openqa.selenium.WebElement;
 
 public class ArticlePageObject extends MainPageObject {
 
+    private static final By
+            TITLE = By.id("org.wikipedia:id/view_page_title_text"),
+            FOOTER_ELEMENT = By.xpath("//*[@text='View page in browser']"),
+            ADD_TO_READING_LIST_BUTTON = By.xpath("//android.widget.ImageView[@content-desc='Add this article to a reading list']"),
+            ONBOARDING = By.id("org.wikipedia:id/onboarding_button"),
+            MY_LIST_NAME_INPUT = By.id("org.wikipedia:id/text_input"),
+            MY_LIST_OK_BUTTON = By.xpath("//*[@text='OK']"),
+            CLOSE_ARTICLE_BUTTON = By.xpath("//android.widget.ImageButton[@content-desc='Navigate up']");
     private static final String
-            TITLE = "org.wikipedia:id/view_page_title_text",
-            FOOTER_ELEMENT = "//*[@text='View page in browser']",
-            ADD_TO_READING_LIST_BUTTON = "//android.widget.ImageView[@content-desc='Add this article to a reading list']",
-            ONBOARDING = "org.wikipedia:id/onboarding_button",
-            MY_LIST_NAME_INPUT = "org.wikipedia:id/text_input",
-            MY_LIST_OK_BUTTON = "//*[@text='OK']",
-            CLOSE_ARTICLE_BUTTON = "//android.widget.ImageButton[@content-desc='Navigate up']",
             SAVED_READING_LIST_BY_NAME_TPL = "//android.widget.TextView[@text='{NAME}']";
 
-    private static String getReadingListXpathByName(String nameOfReadingList) {
-        return SAVED_READING_LIST_BY_NAME_TPL.replace("{NAME}", nameOfReadingList);
+    private static By getReadingListLocatorByName(String nameOfReadingList) {
+        return By.xpath(SAVED_READING_LIST_BY_NAME_TPL.replace("{NAME}", nameOfReadingList));
     }
 
     public ArticlePageObject(AppiumDriver driver) {
@@ -25,13 +26,11 @@ public class ArticlePageObject extends MainPageObject {
     }
 
     public void checkTitleElementImmideatly() {
-        this.assertElementPresent(
-                By.id(TITLE),
-                "Cannot find article title immediately");
+        this.assertElementPresent(TITLE, "Cannot find article title immediately");
     }
 
     public WebElement waitForTitleElement() {
-        return this.waitForElementPresent(By.id(TITLE), "Cannot find article title", 15);
+        return this.waitForElementPresent(TITLE, "Cannot find article title", 15);
     }
 
     public String getArticleTitle() {
@@ -40,12 +39,12 @@ public class ArticlePageObject extends MainPageObject {
     }
 
     public void swipeToFooter() {
-        this.swipeUpToFindElement(By.xpath(FOOTER_ELEMENT), "Cannot find footer element by swipe", 10);
+        this.swipeUpToFindElement(FOOTER_ELEMENT, "Cannot find footer element by swipe", 10);
     }
 
     public void clickAddArticleToReadingList() {
         this.waitForElementAndClick(
-                By.xpath(ADD_TO_READING_LIST_BUTTON),
+                ADD_TO_READING_LIST_BUTTON,
                 "Cannot find button for adding article to reading list",
                 5);
     }
@@ -54,28 +53,27 @@ public class ArticlePageObject extends MainPageObject {
         this.clickAddArticleToReadingList();
 
         this.waitForElementAndClick(
-                By.id(ONBOARDING),
+                ONBOARDING,
                 "Cannot find onboarding overlay",
                 5);
 
         this.waitForElementAndClear(
-                By.id(MY_LIST_NAME_INPUT),
+                MY_LIST_NAME_INPUT,
                 "Cannot find input for new reading list",
                 5);
 
         this.waitForElementAndSendKeys(
-                By.id(MY_LIST_NAME_INPUT),
+                MY_LIST_NAME_INPUT,
                 nameForSavedReadingList,
                 "Cannot send text to input for reading list",
                 5);
 
-        //System.out.println("Press OK button");
         this.waitForElementAndClick(
-                By.xpath(MY_LIST_OK_BUTTON),
+                MY_LIST_OK_BUTTON,
                 "Cannot press OK button",
                 5);
         this.waitForElementNotPresent(
-                By.xpath(MY_LIST_OK_BUTTON),
+                MY_LIST_OK_BUTTON,
                 "OK button still exists",
                 5);
     }
@@ -84,21 +82,18 @@ public class ArticlePageObject extends MainPageObject {
         this.clickAddArticleToReadingList();
 
         this.waitForElementAndClick(
-                By.xpath(getReadingListXpathByName(nameForSavedReadingList)),
+                getReadingListLocatorByName(nameForSavedReadingList),
                 "Cannot find existing reading list: " + nameForSavedReadingList,
                 5);
 
         this.waitForElementNotPresent(
-                By.xpath(getReadingListXpathByName(nameForSavedReadingList)),
+                getReadingListLocatorByName(nameForSavedReadingList),
                 "Name of saved reading list still exists",
                 5);
     }
 
     public void closeOpenedArticle() {
-        this.waitForElementAndClick(
-                By.xpath(CLOSE_ARTICLE_BUTTON),
-                "Cannot find close article button",
-                5);
+        this.waitForElementAndClick(CLOSE_ARTICLE_BUTTON, "Cannot find close article button", 5);
     }
 
 }

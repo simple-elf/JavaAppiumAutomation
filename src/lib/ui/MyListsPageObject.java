@@ -5,17 +5,19 @@ import org.openqa.selenium.By;
 
 public class MyListsPageObject extends MainPageObject {
 
+    public static final By
+
+            MY_LISTS_HEADER = By.xpath("//android.widget.TextView[@text='My lists']");
     public static final String
             READING_LIST_BY_NAME_TPL = "//*[@text='{READING_LIST_NAME}']",
-            MY_LISTS_HEADER = "//android.widget.TextView[@text='My lists']",
             ARTICLE_BY_TITLE_TPL = "//*[@text='{TITLE}']";
 
-    private static String getFolderXpathByName(String nameOfFolder) {
-        return READING_LIST_BY_NAME_TPL.replace("{READING_LIST_NAME}", nameOfFolder);
+    private static By getFolderLocatorByName(String nameOfFolder) {
+        return By.xpath(READING_LIST_BY_NAME_TPL.replace("{READING_LIST_NAME}", nameOfFolder));
     }
 
-    private static String getSavedArticleXpathByTitle(String title) {
-        return ARTICLE_BY_TITLE_TPL.replace("{TITLE}", title);
+    private static By getSavedArticleLocatorByTitle(String title) {
+        return By.xpath(ARTICLE_BY_TITLE_TPL.replace("{TITLE}", title));
     }
 
     public MyListsPageObject(AppiumDriver driver) {
@@ -25,28 +27,28 @@ public class MyListsPageObject extends MainPageObject {
     public void openFolderByName(String nameOfReadingList) {
         this.waitForMyListsPageHeader();
         this.waitForElementAndClick(
-                By.xpath(getFolderXpathByName(nameOfReadingList)),
+                getFolderLocatorByName(nameOfReadingList),
                 "Cannon find saved reading list by name: " + nameOfReadingList,
                 5);
     }
 
     public void waitForMyListsPageHeader() {
         this.waitForElementPresent(
-                By.xpath(MY_LISTS_HEADER),
+                MY_LISTS_HEADER,
                 "Cannot find saved lists header",
                 5);
     }
 
     public void waitForArticleToAppearByTitle(String articleTitle) {
         this.waitForElementPresent(
-                By.xpath(getSavedArticleXpathByTitle(articleTitle)),
+                getSavedArticleLocatorByTitle(articleTitle),
                 "Cannot find saved article: " + articleTitle,
                 5);
     }
 
     public void waitForArticleToDisappearByTitle(String articleTitle) {
         this.waitForElementNotPresent(
-                By.xpath(getSavedArticleXpathByTitle(articleTitle)),
+                getSavedArticleLocatorByTitle(articleTitle),
                 "Cannot delete saved article: " + articleTitle,
                 5);
     }
@@ -55,7 +57,7 @@ public class MyListsPageObject extends MainPageObject {
         this.waitForArticleToAppearByTitle(articleTitle);
 
         this.swipeElementToLeft(
-                By.xpath(getSavedArticleXpathByTitle(articleTitle)),
+                getSavedArticleLocatorByTitle(articleTitle),
                 "Cannot swipe saved article: " + articleTitle);
 
         this.waitForArticleToDisappearByTitle(articleTitle);
