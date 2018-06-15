@@ -69,6 +69,24 @@ public class MainPageObject {
         }
     }
 
+    public void swipeUpToTillElementAppear(By by, String errorText, int maxSwipes) {
+        int alreadySwipe = 0;
+        while (!this.isElementLocatedOnTheScreen(by)) {
+            if (alreadySwipe > maxSwipes) {
+                Assert.assertTrue(errorText, this.isElementLocatedOnTheScreen(by));
+            }
+            swipeUpQuick();
+            alreadySwipe++;
+        }
+    }
+
+    public boolean isElementLocatedOnTheScreen(By by) {
+        int elementLocationY = this.waitForElementPresent(by, "Cannot find element by locator", 5).getLocation().getY();
+        int screenSizeY = driver.manage().window().getSize().height;
+
+        return elementLocationY < screenSizeY;
+    }
+
     protected void swipeUpQuick() {
         swipeUp(100);
     }

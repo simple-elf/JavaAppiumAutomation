@@ -3,6 +3,7 @@ package tests;
 import lib.CoreTestCase;
 import lib.ui.ArticlePageObject;
 import lib.ui.SearchPageObject;
+import lib.ui.factories.ArticlePageObjectFactory;
 import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Test;
 
@@ -13,13 +14,13 @@ public class ArticleTests extends CoreTestCase {
         SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
 
         searchPageObject.initSearchInput();
-        searchPageObject.typeSearchInput("Java");
-        searchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
+        searchPageObject.typeSearchInput("Appium");
+        searchPageObject.clickByArticleWithSubstring("Appium");
 
-        ArticlePageObject articlePageObject = new ArticlePageObject(driver);
+        ArticlePageObject articlePageObject = ArticlePageObjectFactory.get(driver);
         String articleTitle = articlePageObject.getArticleTitle();
 
-        assertEquals("Element text is not expected!", "Java (programming language)", articleTitle);
+        assertEquals("Element text is not expected!", "Appium", articleTitle);
     }
 
     @Test
@@ -30,7 +31,7 @@ public class ArticleTests extends CoreTestCase {
         searchPageObject.typeSearchInput("Appium");
         searchPageObject.clickByArticleWithSubstring("Appium");
 
-        ArticlePageObject articlePageObject = new ArticlePageObject(driver);
+        ArticlePageObject articlePageObject = ArticlePageObjectFactory.get(driver);
         articlePageObject.waitForTitleElement();
         articlePageObject.swipeToFooter();
     }
@@ -40,11 +41,11 @@ public class ArticleTests extends CoreTestCase {
         SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
 
         searchPageObject.initSearchInput();
-        searchPageObject.typeSearchInput("Java");
-        searchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
+        searchPageObject.typeSearchInput("Appium");
+        searchPageObject.clickByArticleWithSubstring("Appium");
 
-        ArticlePageObject articlePageObject = new ArticlePageObject(driver);
-        //articlePageObject.waitForTitleElement(); // без этого ожидания возникает ошибка
+        ArticlePageObject articlePageObject = ArticlePageObjectFactory.get(driver);
+        articlePageObject.waitForTitleElement(); // без этого ожидания возникает ошибка
         articlePageObject.checkTitleElementImmideatly();
     }
 

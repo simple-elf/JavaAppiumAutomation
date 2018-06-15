@@ -1,21 +1,22 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import lib.Platform;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-public class ArticlePageObject extends MainPageObject {
+abstract public class ArticlePageObject extends MainPageObject {
 
-    private static final By
-            TITLE = By.id("org.wikipedia:id/view_page_title_text"),
-            FOOTER_ELEMENT = By.xpath("//*[@text='View page in browser']"),
-            ADD_TO_READING_LIST_BUTTON = By.xpath("//android.widget.ImageView[@content-desc='Add this article to a reading list']"),
-            ONBOARDING = By.id("org.wikipedia:id/onboarding_button"),
-            MY_LIST_NAME_INPUT = By.id("org.wikipedia:id/text_input"),
-            MY_LIST_OK_BUTTON = By.xpath("//*[@text='OK']"),
-            CLOSE_ARTICLE_BUTTON = By.xpath("//android.widget.ImageButton[@content-desc='Navigate up']");
-    private static final String
-            SAVED_READING_LIST_BY_NAME_TPL = "//android.widget.TextView[@text='{NAME}']";
+    protected static By
+            TITLE,
+            FOOTER_ELEMENT,
+            ADD_TO_READING_LIST_BUTTON,
+            ONBOARDING,
+            MY_LIST_NAME_INPUT,
+            MY_LIST_OK_BUTTON,
+            CLOSE_ARTICLE_BUTTON;
+    protected static String
+            SAVED_READING_LIST_BY_NAME_TPL;
 
     private static By getReadingListLocatorByName(String nameOfReadingList) {
         return By.xpath(SAVED_READING_LIST_BY_NAME_TPL.replace("{NAME}", nameOfReadingList));
@@ -35,11 +36,20 @@ public class ArticlePageObject extends MainPageObject {
 
     public String getArticleTitle() {
         WebElement titleElement = this.waitForTitleElement();
-        return titleElement.getAttribute("text");
+        if (Platform.getInstance().isAndroid()) {
+            return titleElement.getAttribute("text");
+        } else {
+            return titleElement.getAttribute("name");
+        }
+
     }
 
     public void swipeToFooter() {
-        this.swipeUpToFindElement(FOOTER_ELEMENT, "Cannot find footer element by swipe", 10);
+        if (Platform.getInstance().isAndroid()) {
+            this.swipeUpToFindElement(FOOTER_ELEMENT, "Cannot find footer element by swipe", 40);
+        } else {
+            this.swipeUpToTillElementAppear(FOOTER_ELEMENT, "Cannot find footer element by swipe", 40);
+        }
     }
 
     public void clickAddArticleToReadingList() {
