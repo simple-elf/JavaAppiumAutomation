@@ -2,21 +2,21 @@ package lib;
 
 import io.appium.java_client.AppiumDriver;
 import junit.framework.TestCase;
+import lib.ui.WelcomePageObject;
 import org.openqa.selenium.ScreenOrientation;
 
 public class CoreTestCase extends TestCase {
 
     protected AppiumDriver driver;
-    protected Platform platform;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
 
-        this.platform = new Platform();
-        driver = this.platform.getDriver();
+        driver = Platform.getInstance().getDriver();
 
         this.rotateScreenPortrait();
+        this.skipWelcomePageForIOSApp();
     }
 
     @Override
@@ -36,6 +36,13 @@ public class CoreTestCase extends TestCase {
 
     protected void backgroundApp(int seconds) {
         driver.runAppInBackground(seconds);
+    }
+
+    private void skipWelcomePageForIOSApp() {
+        if (Platform.getInstance().isIOS()) {
+            WelcomePageObject welcomePageObject = new WelcomePageObject(driver);
+            welcomePageObject.clickSkipButton();
+        }
     }
 
 }

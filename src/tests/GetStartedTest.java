@@ -1,6 +1,7 @@
 package tests;
 
 import lib.CoreTestCase;
+import lib.Platform;
 import lib.ui.WelcomePageObject;
 import org.junit.Assert;
 import org.junit.Assume;
@@ -10,7 +11,7 @@ public class GetStartedTest extends CoreTestCase {
 
     @Test
     public void testPassThroughWelcome() {
-        Assume.assumeTrue("This test is ignored on Android", this.platform.isIOS());
+        Assume.assumeTrue("This test is ignored on Android", Platform.getInstance().isIOS());
 
         WelcomePageObject welcomePageObject = new WelcomePageObject(driver);
 

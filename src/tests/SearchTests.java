@@ -2,13 +2,14 @@ package tests;
 
 import lib.CoreTestCase;
 import lib.ui.SearchPageObject;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Test;
 
 public class SearchTests extends CoreTestCase {
 
     @Test
     public void testSearchAndCheck() {
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
 
         searchPageObject.initSearchInput();
         searchPageObject.typeSearchInput("Java");
@@ -24,7 +25,7 @@ public class SearchTests extends CoreTestCase {
      */
     @Test
     public void testCancelSearch() {
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
 
         searchPageObject.initSearchInput();
         searchPageObject.typeSearchInput("Java");
@@ -40,7 +41,7 @@ public class SearchTests extends CoreTestCase {
 
     @Test
     public void testAmountOfNotEmptySearch() {
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
 
         searchPageObject.initSearchInput();
         String searchString = "Avril Lavigne discography";
@@ -52,7 +53,7 @@ public class SearchTests extends CoreTestCase {
 
     @Test
     public void testAmountOfEmptySearch() {
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
 
         searchPageObject.initSearchInput();
         String searchString = "Selenium Selenide Appium";
@@ -69,7 +70,7 @@ public class SearchTests extends CoreTestCase {
      */
     @Test
     public void testSearchAndCheckResults() {
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
 
         searchPageObject.searchAndCheckResults("Java");
         searchPageObject.searchAndCheckResults("Selenium");
@@ -80,7 +81,7 @@ public class SearchTests extends CoreTestCase {
 
     @Test
     public void testSearchAndCheckResultsByTitleAndDescription() {
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
 
         searchPageObject.initSearchInput();
 
@@ -94,7 +95,7 @@ public class SearchTests extends CoreTestCase {
         searchPageObject.waitForElementByTitleAndDescription(
                 "JavaScript",
                 "Programming language");
-        searchPageObject.clickCancelSearch();
+        searchPageObject.clearSearchInput();
 
         searchPageObject.typeSearchInput("Apollo");
         searchPageObject.waitForElementByTitleAndDescription(
@@ -106,7 +107,7 @@ public class SearchTests extends CoreTestCase {
         searchPageObject.waitForElementByTitleAndDescription(
                 "Apollo program",
                 "American human spaceflight program");
-        searchPageObject.clickCancelSearch();
+        searchPageObject.clearSearchInput();
 
         searchPageObject.typeSearchInput("Selenium");
         searchPageObject.waitForElementByTitleAndDescription(
@@ -119,7 +120,7 @@ public class SearchTests extends CoreTestCase {
         //searchPageObject.waitForElementByTitleAndDescription(
         //        "Selenium in biology",
         //        "");
-        searchPageObject.clickCancelSearch();
+        searchPageObject.clearSearchInput();
     }
 
 }

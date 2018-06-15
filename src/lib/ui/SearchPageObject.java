@@ -1,6 +1,7 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import lib.Platform;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.openqa.selenium.By;
@@ -8,27 +9,23 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-public class SearchPageObject extends MainPageObject {
+abstract public class SearchPageObject extends MainPageObject {
 
-    private static final By
-            SEARCH_INIT_ELEMENT = By.xpath("//*[contains(@text, 'Search Wikipedia')]"),
-            SEARCH_INPUT = By.id("org.wikipedia:id/search_src_text"),
-            SEARCH_CANCEL_BUTTON = By.id("org.wikipedia:id/search_close_btn"),
-            SEARCH_EMPTY_MESSAGE = By.id("org.wikipedia:id/search_empty_message"),
-            SEARCH_RESULTS_LIST = By.id("org.wikipedia:id/search_results_list"),
-            SEARCH_RESULTS_LIST_ITEM = By.id("org.wikipedia:id/page_list_item_container"),
-            SEARCH_RESULTS_LIST_ITEM_TITLE = By.id("org.wikipedia:id/page_list_item_title"),
-            EMPTY_RESULT_LABEL = By.xpath("//*[@text='No results found']"),
-            SEARCH_RESULTS_ELEMENT = By.xpath("//*[@resource-id='org.wikipedia:id/search_results_list']" +
-                    "/*[@resource-id='org.wikipedia:id/page_list_item_container']");
-    private static final String
-            SEARCH_EMPTY_MESSAGE_TEXT = "Search and read the free encyclopedia in your language",
-            SEARCH_RESULT_BY_SUBSTRING_TPL =
-            "//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='{SUBSTRING}']",
-            SEARCH_RESULT_BY_TITLE_AND_DESCRIPTION =
-                    "//*[@resource-id='org.wikipedia:id/page_list_item_container']" +
-                    "//*[@resource-id='org.wikipedia:id/page_list_item_title'][@text='{TITLE}']/" +
-                    "../*[@resource-id='org.wikipedia:id/page_list_item_description'][@text='{DESCRIPTION}']";
+    protected static By
+            SEARCH_INIT_ELEMENT,
+            SEARCH_INPUT,
+            SEARCH_CANCEL_BUTTON,
+            SEARCH_EMPTY_MESSAGE,
+            SEARCH_RESULTS_LIST,
+            SEARCH_RESULTS_LIST_ITEM,
+            SEARCH_RESULTS_LIST_ITEM_TITLE,
+            EMPTY_RESULT_LABEL,
+            SEARCH_RESULTS_ELEMENT,
+            SEARCH_INPUT_CLEAR_BUTTON;
+    protected static String
+            SEARCH_EMPTY_MESSAGE_TEXT,
+            SEARCH_RESULT_BY_SUBSTRING_TPL,
+            SEARCH_RESULT_BY_TITLE_AND_DESCRIPTION;
 
     public SearchPageObject(AppiumDriver driver) {
         super(driver);
@@ -55,7 +52,9 @@ public class SearchPageObject extends MainPageObject {
                 SEARCH_INPUT,
                 "Cannot find search input",
                 5);
-        this.checkElementText(searchInput, "Search…");
+        if (Platform.getInstance().isAndroid()) {
+            this.checkElementText(searchInput, "Search…");
+        }
     }
 
     public void waitForCancelButtonToAppear() {
@@ -92,6 +91,9 @@ public class SearchPageObject extends MainPageObject {
                 SEARCH_INPUT,
                 "Cannot find and clear search input",
                 5);
+        if (Platform.getInstance().isIOS()) {
+            this.waitForElementAndClick(SEARCH_INPUT_CLEAR_BUTTON, "Cannot find input clear button", 5);
+        }
     }
 
     public void waitForSearchResult(String subString) {
@@ -127,6 +129,8 @@ public class SearchPageObject extends MainPageObject {
     }
 
     public void waitForSearchEmptyMessage() {
+        if (Platform.getInstance().isIOS())
+            return;
         WebElement emptyMessage = this.waitForElementPresent(
                 SEARCH_EMPTY_MESSAGE,
                 "Cannot find empty search message",
@@ -162,7 +166,8 @@ public class SearchPageObject extends MainPageObject {
         this.waitForSearchResultsListNotEmpty();
 
         List<WebElement> searchResultsList = this.getSearchResultsList();
-        searchResultsList.remove(searchResultsList.size() - 1); // fix to remove last partly visible line
+        searchResultsList = searchResultsList.subList(0, 6);
+        //searchResultsList.remove(searchResultsList.size() - 1); // fix to remove last partly visible line
         System.out.println("Size: " + searchResultsList.size());
 
         for (WebElement searchItem : searchResultsList) {
@@ -176,6 +181,7 @@ public class SearchPageObject extends MainPageObject {
 
         this.clearSearchInput();
         this.waitForSearchEmptyMessage();
+
     }
 
     public void waitForElementByTitleAndDescription(String title, String description) {

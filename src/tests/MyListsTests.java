@@ -5,13 +5,14 @@ import lib.ui.ArticlePageObject;
 import lib.ui.MyListsPageObject;
 import lib.ui.NavigationUI;
 import lib.ui.SearchPageObject;
+import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Test;
 
 public class MyListsTests extends CoreTestCase {
 
     @Test
     public void testSaveFirstArticleToMyList() {
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);;
 
         searchPageObject.initSearchInput();
         searchPageObject.typeSearchInput("Java");
@@ -40,7 +41,7 @@ public class MyListsTests extends CoreTestCase {
         String secondSearch = "Appium";
         String nameForSavedReadingList = "Learning mobile automation";
 
-        SearchPageObject searchPageObject = new SearchPageObject(driver);
+        SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);;
 
         searchPageObject.initSearchInput();
         searchPageObject.typeSearchInput(firstSearch);
