@@ -5,18 +5,25 @@ import lib.Platform;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import java.util.Set;
+
 abstract public class ArticlePageObject extends MainPageObject {
 
     protected static By
             TITLE,
             FOOTER_ELEMENT,
             ADD_TO_READING_LIST_BUTTON,
+            ADD_TO_READING_LIST_BUTTON_SAVED,
             ONBOARDING,
             MY_LIST_NAME_INPUT,
             MY_LIST_OK_BUTTON,
-            CLOSE_ARTICLE_BUTTON;
+            CLOSE_ARTICLE_BUTTON,
+            SAVED_BACK_LINK,
+            WEB_VIEW,
+            LOADING_PROGRESS;
     protected static String
-            SAVED_READING_LIST_BY_NAME_TPL;
+            SAVED_READING_LIST_BY_NAME_TPL,
+            TITLE_TPL;
 
     private static By getReadingListLocatorByName(String nameOfReadingList) {
         return By.xpath(SAVED_READING_LIST_BY_NAME_TPL.replace("{NAME}", nameOfReadingList));
@@ -30,7 +37,38 @@ abstract public class ArticlePageObject extends MainPageObject {
         this.assertElementPresent(TITLE, "Cannot find article title immediately");
     }
 
+    public WebElement waitForTitleElement(String title) {
+        return this.waitForElementPresent(TITLE, "Cannot find article title", 5);
+    }
+
+    public void waitForWebView() {
+        System.out.println(new java.util.Date());
+        for (int i = 0; i < 10; i++) {
+            try {
+                System.out.println(driver.getContext());
+                System.out.println(driver.getContextHandles());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println(new java.util.Date());
+    }
+
     public WebElement waitForTitleElement() {
+        if (Platform.getInstance().isIOS()) {
+
+            System.out.println(new java.util.Date());
+            this.waitForElementNotPresent(LOADING_PROGRESS, "Cannot wait for loading bar to disappear", 30);
+            System.out.println(new java.util.Date());
+            System.out.println();
+
+            //waitForWebView();
+            System.out.println(new java.util.Date());
+            this.waitForElementPresent(WEB_VIEW, "Cannot find WebView", 30); //XCUIElementTypeWebView
+            System.out.println(new java.util.Date());
+            //waitForWebView();
+
+        }
         return this.waitForElementPresent(TITLE, "Cannot find article title", 15);
     }
 
@@ -102,8 +140,18 @@ abstract public class ArticlePageObject extends MainPageObject {
                 5);
     }
 
+    public void addArticleToMySaved() {
+        //System.out.println("addArticleToMySaved");
+        this.waitForElementAndClick(ADD_TO_READING_LIST_BUTTON, "Cannot find add to reading list button", 5);
+        this.waitForElementPresent(ADD_TO_READING_LIST_BUTTON_SAVED, "Cannot find add to reading list button (saved)", 5);
+    }
+
     public void closeOpenedArticle() {
         this.waitForElementAndClick(CLOSE_ARTICLE_BUTTON, "Cannot find close article button", 5);
+    }
+
+    public void closeOpenedArticleReturnToSaved() {
+        this.waitForElementAndClick(SAVED_BACK_LINK, "Cannot find button for going back to 'Saved'", 5);
     }
 
 }

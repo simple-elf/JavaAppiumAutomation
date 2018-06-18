@@ -2,6 +2,7 @@ package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.TouchAction;
+import lib.Platform;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -37,6 +38,21 @@ public class MainPageObject {
         return elements.size();
     }
 
+    public void clickElementToTheRightUpperCorner(By by, String errorText) {
+        by = By.xpath(by.toString().replace("By.xpath: ", "") + "/.."); // get parent
+        WebElement element = this.waitForElementPresent(by, errorText);
+        int rightX = element.getLocation().getX();
+        int upperY = element.getLocation().getY();
+        int lowerY = upperY + element.getSize().getHeight();
+        int middleY = (upperY + lowerY) / 2;
+        int width = element.getSize().getWidth();
+
+        int pointClickX = (rightX + width) - 3;
+        int pointClickY = middleY;
+        TouchAction action = new TouchAction(driver);
+        action.tap(pointClickX, pointClickY).perform();
+    }
+
     public void swipeElementToLeft(By by, String errorText) {
         WebElement element = waitForElementPresent(
                 by,
@@ -49,12 +65,18 @@ public class MainPageObject {
         int lowerY = upperY + element.getSize().getHeight();
         int middleY = (upperY + lowerY) / 2;
 
-        new TouchAction(driver)
-                .press(rightX, middleY)
-                .waitAction(150)
-                .moveTo(leftX, middleY)
-                .release()
-                .perform();
+        TouchAction action = new TouchAction(driver);
+        action.press(rightX, middleY).waitAction(150);
+
+        if (Platform.getInstance().isAndroid()) {
+            action.moveTo(leftX, middleY);
+        } else {
+            int offsetX = (-1 * element.getSize().getWidth());
+            action.moveTo(offsetX, 0);
+        }
+
+
+        action.release().perform();
     }
 
     public void swipeUpToFindElement(By by, String errorText, int maxSwipes) {
@@ -88,15 +110,15 @@ public class MainPageObject {
     }
 
     protected void swipeUpQuick() {
-        swipeUp(100);
+        swipeUp(150);
     }
 
     protected void swipeUp(int timeOfSwipe) {
         TouchAction action = new TouchAction(driver);
         Dimension size = driver.manage().window().getSize();
         int x = size.width / 2;
-        int startY = (int) (size.height * 0.8);
-        int endY = (int) (size.height * 0.2);
+        int startY = (int) (size.height * 0.7);
+        int endY = (int) (size.height * 0.3);
 
         action
                 .press(x, startY)

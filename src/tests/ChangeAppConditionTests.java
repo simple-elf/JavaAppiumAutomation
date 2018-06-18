@@ -14,8 +14,8 @@ public class ChangeAppConditionTests extends CoreTestCase {
         SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);;
 
         searchPageObject.initSearchInput();
-        searchPageObject.typeSearchInput("Java");
-        searchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
+        searchPageObject.typeSearchInput("Selenium");
+        searchPageObject.clickByArticleWithSubstring("Selenium (software)");
 
         ArticlePageObject articlePageObject = ArticlePageObjectFactory.get(driver);;
         String titleBeforeRotation = articlePageObject.getArticleTitle();

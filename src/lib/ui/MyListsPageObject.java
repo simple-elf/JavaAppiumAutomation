@@ -1,16 +1,16 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import lib.Platform;
 import org.openqa.selenium.By;
 
-public class MyListsPageObject extends MainPageObject {
+abstract public class MyListsPageObject extends MainPageObject {
 
-    public static final By
-
-            MY_LISTS_HEADER = By.xpath("//android.widget.TextView[@text='My lists']");
-    public static final String
-            READING_LIST_BY_NAME_TPL = "//*[@text='{READING_LIST_NAME}']",
-            ARTICLE_BY_TITLE_TPL = "//*[@text='{TITLE}']";
+    protected static By
+            MY_LISTS_HEADER;
+    protected static String
+            READING_LIST_BY_NAME_TPL,
+            ARTICLE_BY_TITLE_TPL;
 
     private static By getFolderLocatorByName(String nameOfFolder) {
         return By.xpath(READING_LIST_BY_NAME_TPL.replace("{READING_LIST_NAME}", nameOfFolder));
@@ -25,6 +25,8 @@ public class MyListsPageObject extends MainPageObject {
     }
 
     public void openFolderByName(String nameOfReadingList) {
+        if (Platform.getInstance().isIOS())
+            return;
         this.waitForMyListsPageHeader();
         this.waitForElementAndClick(
                 getFolderLocatorByName(nameOfReadingList),
@@ -59,6 +61,12 @@ public class MyListsPageObject extends MainPageObject {
         this.swipeElementToLeft(
                 getSavedArticleLocatorByTitle(articleTitle),
                 "Cannot swipe saved article: " + articleTitle);
+
+        if (Platform.getInstance().isIOS()) {
+            this.clickElementToTheRightUpperCorner(
+                    getSavedArticleLocatorByTitle(articleTitle),
+                    "Cannot find and delete saved article");
+        }
 
         this.waitForArticleToDisappearByTitle(articleTitle);
     }

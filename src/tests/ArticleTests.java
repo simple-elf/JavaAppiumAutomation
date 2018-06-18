@@ -14,13 +14,13 @@ public class ArticleTests extends CoreTestCase {
         SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
 
         searchPageObject.initSearchInput();
-        searchPageObject.typeSearchInput("Appium");
-        searchPageObject.clickByArticleWithSubstring("Appium");
+        searchPageObject.typeSearchInput("Java");
+        searchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
 
         ArticlePageObject articlePageObject = ArticlePageObjectFactory.get(driver);
         String articleTitle = articlePageObject.getArticleTitle();
 
-        assertEquals("Element text is not expected!", "Appium", articleTitle);
+        assertEquals("Element text is not expected!", "Java (programming language)", articleTitle);
     }
 
     @Test
