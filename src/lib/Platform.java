@@ -11,7 +11,7 @@ public class Platform {
 
     private static final String PLATFORM_IOS = "ios";
     private static final String PLATFORM_ANDROID = "android";
-    private static final String APPIUM_URL = "http://192.168.1.103:4723/wd/hub"; // "http://127.0.0.1:4723/wd/hub"
+    private static final String APPIUM_URL = "http://192.168.1.204:4723/wd/hub"; // "http://127.0.0.1:4723/wd/hub"
 
     private static Platform instance;
     private Platform() {}
